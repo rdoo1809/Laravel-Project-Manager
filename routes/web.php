@@ -7,7 +7,8 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 
-Route::get('/project-manager', [ProjectController::class, 'index'])->name('project.index');
+Route::get('/project', [ProjectController::class, 'index'])->name('project.index');
+Route::post('/project', [ProjectController::class, 'store'])->name('project.store');
 
 
 

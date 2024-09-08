@@ -1,6 +1,25 @@
 <script>
+import {useForm} from "@inertiajs/vue3";
+import PrimaryButton from "@/Components/PrimaryButton.vue";
+
 export default {
-    name: "ProjectManager"
+    name: "ProjectManager",
+    components: {PrimaryButton},
+    data() {
+        return {
+            form: useForm({
+                title: '',
+                description: '',
+                members: 'no assignees currently',
+            }),
+        };
+    },
+    methods: {
+        submitForm() {
+            this.form.post(route('project.store'))
+            console.log(this.form);
+        }
+    }
 }
 </script>
 
@@ -9,15 +28,16 @@ export default {
     <div class="p-24">
         <h1>Add New Projects to your Team</h1>
         <hr>
-        <form class="py-12 flex flex-col space-y-4 items-center">
+        <form @submit.prevent="submitForm"
+              class="py-12 flex flex-col space-y-4 items-center">
             <label>
                 Project Name:
-                <input type="text"/>
+                <input v-model="form.title" type="text"/>
             </label>
 
             <label>
                 Description:
-                <input type="text"/>
+                <input v-model="form.description" type="text"/>
             </label>
 
             <label>
@@ -25,7 +45,7 @@ export default {
                 <input placeholder="dropdown? available team members?" type="text"/>
             </label>
 
-            <input type="button" class="bg-blue-500 hover:bg-blue-700 text-white rounded" value="Submit"/>
+            <PrimaryButton class="mt-4">Create Project</PrimaryButton>
         </form>
     </div>
 </template>

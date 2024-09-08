@@ -32,6 +32,19 @@ class ProjectController extends Controller
     public function store(Request $request)
     {
         //
+        $validated = $request->validate([
+            'title' => 'required|string',
+            'description' => 'required|string'
+        ]);
+
+        $project = new Project();
+        $project->title = $validated['title'];
+        $project->description = $validated['description'];
+
+        $project->save();
+
+        return redirect(route('dashboard'));
+
     }
 
     /**
