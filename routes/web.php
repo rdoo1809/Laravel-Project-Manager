@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
+use App\Models\Project;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -9,9 +10,6 @@ use Inertia\Inertia;
 
 Route::get('/project', [ProjectController::class, 'index'])->name('project.index');
 Route::post('/project', [ProjectController::class, 'store'])->name('project.store');
-
-
-
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -23,7 +21,12 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
+
+    $projects = Project::all();
+
+    return Inertia::render('Dashboard', [
+        'projects' => $projects
+    ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
