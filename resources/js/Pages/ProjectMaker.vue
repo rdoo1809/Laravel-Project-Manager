@@ -3,7 +3,7 @@ import {useForm} from "@inertiajs/vue3";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 
 export default {
-    name: "ProjectManager",
+    name: "ProjectMaker",
     components: {PrimaryButton},
     data() {
         return {
@@ -16,7 +16,7 @@ export default {
     },
     methods: {
         submitForm() {
-            this.form.post(route('project.store'))
+            this.form.post(route('projects.store'))
             console.log(this.form);
         }
     }

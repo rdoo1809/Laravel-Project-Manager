@@ -1,8 +1,22 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import {Head} from '@inertiajs/vue3';
+import PrimaryButton from "@/Components/PrimaryButton.vue";
+import NavLink from "@/Components/NavLink.vue";
+import axios from "axios";
 
 defineProps(['projects'])
+
+function handleClick(id) {
+
+    // axios.get(route('/project-create')).then((response) => {
+    //     console.log(response)
+    // }).catch((e) => {
+    //     console.log(e.message);
+    // });
+
+    // 'project.edit'
+}
 </script>
 
 <template>
@@ -28,9 +42,29 @@ defineProps(['projects'])
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div class="p-6 text-gray-900">My Projects</div>
 
-                        <ul v-for="p in projects">
-                            <li>{{ p.title }}: {{ p.description }}</li>
-                        </ul>
+
+                        <table class="border-2 w-full">
+                            <tr>
+                                <td class="font-bold">Project</td>
+                                <td class="font-bold">Description</td>
+                                <td class="font-bold">Actions</td>
+                            </tr>
+                            <tbody v-for="p in projects">
+                            <tr>
+                                <td>
+                                    {{ p.title }}
+                                </td>
+                                <td>
+                                    {{ p.description }}
+                                </td>
+                                <td><a v-on:click="handleClick(p.id)" :href="route('projects.edit', p.id)"
+                                       class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">EDIT</a>
+                                    <!--                                    | <a :href="route('project.index')"-->
+                                    <!--                                         class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">DELETE</a>-->
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

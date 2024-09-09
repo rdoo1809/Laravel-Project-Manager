@@ -14,8 +14,17 @@ class ProjectController extends Controller
     public function index()
     {
         //
-        return Inertia::render('ProjectManager');
+        return Inertia::render('ProjectMaker');
 
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Project $project)
+    {
+        //
+        return Inertia::render('ProjectEditor');
     }
 
     /**
@@ -51,14 +60,6 @@ class ProjectController extends Controller
      * Display the specified resource.
      */
     public function show(Project $project)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Project $project)
     {
         //
     }
