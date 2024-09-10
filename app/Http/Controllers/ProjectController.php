@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Project;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -40,7 +41,7 @@ class ProjectController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         //
         $validated = $request->validate([
@@ -72,6 +73,14 @@ class ProjectController extends Controller
     public function update(Request $request, Project $project)
     {
         //
+        $validated = $request->validate([
+            'title' => 'required|string',
+            'description' => 'required|string'
+        ]);
+
+        $project->update($validated);
+
+        return redirect(route('dashboard'));
     }
 
     /**
