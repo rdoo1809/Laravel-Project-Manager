@@ -9,7 +9,7 @@ use Inertia\Inertia;
 
 
 Route::resource('projects', ProjectController::class)
-    ->only(['index', 'store', 'edit', 'update'])
+    ->only(['index', 'store', 'edit', 'update', 'destroy'])
     ->middleware(['auth', 'verified']);
 
 

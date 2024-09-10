@@ -6,6 +6,7 @@ use App\Models\Project;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use function Termwind\render;
 
 class ProjectController extends Controller
 {
@@ -89,5 +90,13 @@ class ProjectController extends Controller
     public function destroy(Project $project)
     {
         //
+        $project->delete();
+
+        //How to refresh??
+//        $projects = Project::all();
+//        return Inertia::render('dashboard', [
+//            'projects' => $projects
+//        ]);
+        //return Inertia::location(route('dashboard'));
     }
 }

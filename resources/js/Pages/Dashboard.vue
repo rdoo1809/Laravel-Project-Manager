@@ -6,17 +6,6 @@ import NavLink from "@/Components/NavLink.vue";
 import axios from "axios";
 
 defineProps(['projects'])
-
-function handleClick(id) {
-
-    // axios.get(route('/project-create')).then((response) => {
-    //     console.log(response)
-    // }).catch((e) => {
-    //     console.log(e.message);
-    // });
-
-    // 'project.edit'
-}
 </script>
 
 <template>
@@ -57,10 +46,10 @@ function handleClick(id) {
                                 <td>
                                     {{ p.description }}
                                 </td>
-                                <td><a v-on:click="handleClick(p.id)" :href="route('projects.edit', p.id)"
+                                <td><a :href="route('projects.edit', p.id)"
                                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">EDIT</a>
-                                    <!--                                    | <a :href="route('project.index')"-->
-                                    <!--                                         class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">DELETE</a>-->
+                                    | <a v-on:click="axios.delete(route('projects.destroy', p.id))"
+                                         class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">TRASH</a>
                                 </td>
                             </tr>
                             </tbody>
