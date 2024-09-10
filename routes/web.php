@@ -9,19 +9,16 @@ use Inertia\Inertia;
 
 
 Route::resource('projects', ProjectController::class)
-    ->only(['index', 'store', 'edit', 'update', 'destroy'])
+    ->only(['create', 'store', 'edit', 'update', 'destroy'])
     ->middleware(['auth', 'verified']);
 
 
 Route::get('/dashboard', function () {
-
     $projects = Project::all();
-
     return Inertia::render('Dashboard', [
         'projects' => $projects
     ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
-
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -39,10 +36,3 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__ . '/auth.php';
-
-
-// Installed breeze
-//Created model for Project with -mrc
-//Added table fields to Project through migration
-//Project Manager view - make new projects
-//Appear on dashboard

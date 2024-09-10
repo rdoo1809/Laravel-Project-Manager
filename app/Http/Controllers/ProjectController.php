@@ -16,6 +16,12 @@ class ProjectController extends Controller
     public function index()
     {
         //
+        $projects = Project::all();
+
+        return Inertia::render('Dashboard', [
+            'projects' => $projects
+        ]);
+
         return Inertia::render('ProjectMaker');
 
     }
@@ -37,6 +43,7 @@ class ProjectController extends Controller
     public function create()
     {
         //
+        return Inertia::render('ProjectMaker');
     }
 
     /**
