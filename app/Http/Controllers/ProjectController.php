@@ -2,69 +2,41 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreProjectRequest;
 use App\Models\Project;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use function Termwind\render;
 
 class ProjectController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
         $projects = Project::all();
 
         return Inertia::render('Dashboard', [
             'projects' => $projects
         ]);
-
-        return Inertia::render('ProjectMaker');
-
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Project $project)
     {
-        //
         return Inertia::render('ProjectEditor', [
             'selectedProject' => $project
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+
     public function create()
     {
-        //
         return Inertia::render('ProjectMaker');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request): RedirectResponse
+
+    public function store(StoreProjectRequest $request): RedirectResponse
     {
-        //
-        $validated = $request->validate([
-            'title' => 'required|string',
-            'description' => 'required|string'
-        ]);
-
-        $project = new Project();
-        $project->title = $validated['title'];
-        $project->description = $validated['description'];
-
-        $project->save();
-
+        Project::query()->create($request->validated());
         return redirect(route('dashboard'));
-
     }
 
     /**

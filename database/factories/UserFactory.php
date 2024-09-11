@@ -32,6 +32,21 @@ class UserFactory extends Factory
         ];
     }
 
+
+    public function manager(): static
+    {
+        return $this->state(fn(array $attributes) => [
+            'is_manager' => true
+        ]);
+    }
+
+    public function regular(): static
+    {
+        return $this->state(fn(array $attributes) => [
+            'is_regular' => true
+        ]);
+    }
+
     /**
      * Indicate that the model's email address should be unverified.
      */

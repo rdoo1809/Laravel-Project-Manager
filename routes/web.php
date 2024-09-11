@@ -12,7 +12,6 @@ Route::resource('projects', ProjectController::class)
     ->only(['create', 'store', 'edit', 'update', 'destroy'])
     ->middleware(['auth', 'verified']);
 
-
 Route::get('/dashboard', function () {
     $projects = Project::all();
     return Inertia::render('Dashboard', [
