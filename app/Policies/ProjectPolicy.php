@@ -11,7 +11,6 @@ class ProjectPolicy
 
     public function store(User $user): bool
     {
-        //
         return $user->is_manager;
     }
 

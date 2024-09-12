@@ -10,7 +10,6 @@ class StoreProjectRequest extends FormRequest
     public function authorize(): bool
     {
         $result = $this->user()->can('store', Project::class);
-
         return $result;
     }
 

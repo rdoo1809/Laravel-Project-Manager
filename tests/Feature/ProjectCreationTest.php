@@ -15,7 +15,9 @@ class ProjectCreationTest extends TestCase
     public function test_a_regular_user_cannot_create_a_project(): void
     {
         $validProject = Project::factory()->raw();
-        $regularUser = User::factory()->regular()->create();
+        $regularUser = User::factory([
+            'is_manager' => 0
+        ])->regular()->create();
 
         $response = $this->actingAs($regularUser)
             ->fromRoute('projects.create')
