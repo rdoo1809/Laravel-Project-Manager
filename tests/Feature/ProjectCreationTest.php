@@ -41,13 +41,9 @@ class ProjectCreationTest extends TestCase
 
     public function test_a_fresh_project_only_has_manager_as_member(): void
     {
-        //arrange
-        //valid project
-        //valid manager
         $validProject = Project::factory()->raw();
         $managerUser = User::factory()->manager()->create();
 
-        //post to the store route
         $response = $this->actingAs($managerUser)
             ->fromRoute('dashboard')
             ->post(route('projects.store'), $validProject)
@@ -59,14 +55,13 @@ class ProjectCreationTest extends TestCase
                 'newProject' => [
                     'title' => $validProject['title'],
                     'description' => $validProject['description'],
-                    'assignees' => []
+                    'assignees' => ['bob dylan']
                 ]
             ]);
 //                ->assertRedirect();
 
 
         $this->assertDatabaseHas('projects', $validProject);
-
         //assert on json
         //there is a key with employees assigned - only manager present
     }
