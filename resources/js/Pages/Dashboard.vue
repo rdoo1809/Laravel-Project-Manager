@@ -5,7 +5,7 @@ import PrimaryButton from "@/Components/PrimaryButton.vue";
 import NavLink from "@/Components/NavLink.vue";
 import axios from "axios";
 
-defineProps(['projects'])
+defineProps(['projects', 'project'])
 </script>
 
 <template>

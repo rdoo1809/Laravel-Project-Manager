@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProjectRequest;
 use App\Models\Project;
+use http\Env\Response;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class ProjectController extends Controller
@@ -13,10 +15,31 @@ class ProjectController extends Controller
     public function index()
     {
         $projects = Project::all();
-
         return Inertia::render('Dashboard', [
             'projects' => $projects
         ]);
+    }
+
+    public function create()
+    {
+        return Inertia::render('ProjectMaker');
+    }
+
+    public function store(StoreProjectRequest $request)
+    {
+        $project = Project::query()->create($request->validated());
+        Log::info('New resource created:', $project->toArray());
+
+        return response()->json([
+            'newProject' => $project
+        ]);
+
+//        return redirect()->route('dashboard')->with([
+//            'project' => $project
+//        ]);
+
+//        return redirect(route('dashboard'))->with('project', $project);
+
     }
 
     public function edit(Project $project)
@@ -26,30 +49,6 @@ class ProjectController extends Controller
         ]);
     }
 
-
-    public function create()
-    {
-        return Inertia::render('ProjectMaker');
-    }
-
-
-    public function store(StoreProjectRequest $request): RedirectResponse
-    {
-        Project::query()->create($request->validated());
-        return redirect(route('dashboard'));
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Project $project)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Project $project)
     {
         //
@@ -63,9 +62,11 @@ class ProjectController extends Controller
         return redirect(route('dashboard'));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    public function show(Project $project)
+    {
+        //
+    }
+
     public function destroy(Project $project)
     {
         //

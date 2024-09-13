@@ -4,9 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Project;
 use App\Models\User;
-use Database\Factories\ProjectFactory;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 
 class ProjectCreationTest extends TestCase
@@ -43,7 +41,34 @@ class ProjectCreationTest extends TestCase
 
     public function test_a_fresh_project_only_has_manager_as_member(): void
     {
-        $this->markTestIncomplete();
+        //arrange
+        //valid project
+        //valid manager
+        $validProject = Project::factory()->raw();
+        $managerUser = User::factory()->manager()->create();
+
+        //post to the store route
+        $response = $this->actingAs($managerUser)
+            ->fromRoute('dashboard')
+            ->post(route('projects.store'), $validProject)
+            ->assertJsonCount(1)
+//            ->assertJsonFragment([
+//                'title' => $validProject['title']
+//            ]);
+            ->assertJson([
+                'newProject' => [
+                    'title' => $validProject['title'],
+                    'description' => $validProject['description'],
+                    'assignees' => []
+                ]
+            ]);
+//                ->assertRedirect();
+
+
+        $this->assertDatabaseHas('projects', $validProject);
+
+        //assert on json
+        //there is a key with employees assigned - only manager present
     }
 
 }
