@@ -52,8 +52,20 @@ class ProjectCreationTest extends TestCase
             ->assertSee($validProject['title']);
 
         $this->assertDatabaseHas('projects', $validProject);
-        //assert on json
-        //there is a key with employees assigned - only manager present
+
+        $newProject = Project::query()->where('title', $validProject['title'])->first();
+
+        //assert only a single assignee
+        $this->assertCount(1, $newProject->assignees);
+        $this->assertTrue($newProject->assignees->first->is($managerUser));
+
+
+        //pivot tables - singular form - in alpha order
+
+
+        //confirm project has 1 member - who is manager
+
+
     }
 
 }

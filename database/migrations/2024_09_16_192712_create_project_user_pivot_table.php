@@ -10,11 +10,11 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('user_project', function (Blueprint $table) {
+        Schema::create('project_user_pivot', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('project_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
 
             $table->timestamps();
         });
@@ -25,6 +25,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_project');
+        Schema::dropIfExists('project_user_pivot');
     }
 };

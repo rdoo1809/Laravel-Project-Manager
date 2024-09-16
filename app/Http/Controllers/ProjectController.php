@@ -41,7 +41,7 @@ class ProjectController extends Controller
 //            'project' => $project
 //        ]);
 
-        return redirect(route('dashboard'))->with('project', $project);
+        return redirect(route('dashboard'));
 
     }
 
