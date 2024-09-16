@@ -47,11 +47,13 @@ class ProjectCreationTest extends TestCase
         $response = $this->actingAs($managerUser)
             ->fromRoute('dashboard')
             ->post(route('projects.store'), $validProject)
-            ->assertJsonCount(1)
+            ->assertJsonCount(1);
 //            ->assertJsonFragment([
 //                'title' => $validProject['title']
 //            ]);
-            ->assertJson([
+
+
+        $response->assertJson([
                 'newProject' => [
                     'title' => $validProject['title'],
                     'description' => $validProject['description'],

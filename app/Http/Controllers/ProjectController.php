@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProjectRequest;
+use App\Http\Resources\ProjectResource;
 use App\Models\Project;
+use App\Models\User;
 use http\Env\Response;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -28,12 +30,13 @@ class ProjectController extends Controller
     public function store(StoreProjectRequest $request)
     {
         $project = Project::query()->create($request->validated());
-        Log::info('New resource created:', $project->toArray());
+        $user = User::query()->where('id', 1)->first();
+//        $project->assignees()->attach($user);
+        $projectResource = ProjectResource::make($project);
 
         return response()->json([
-            'newProject' => $project
+            'newProject' => $projectResource
         ]);
-
 //        return redirect()->route('dashboard')->with([
 //            'project' => $project
 //        ]);
