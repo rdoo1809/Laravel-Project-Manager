@@ -29,20 +29,12 @@ class ProjectController extends Controller
 
     public function store(StoreProjectRequest $request)
     {
-        $user = User::query()->where('id', 1)->first();
-        $project = Project::query()->create($request->validated());
-//        $project->assignees()->attach($user);
-        $projectResource = ProjectResource::make($project);
+        $user = $request->user();
 
-//        return response()->json([
-//            'newProject' => $projectResource
-//        ]);
-//        return redirect()->route('dashboard')->with([
-//            'project' => $project
-//        ]);
+        $project = Project::query()->create($request->validated());
+        $project->assignees()->attach($user);
 
         return redirect(route('dashboard'));
-
     }
 
     public function edit(Project $project)
@@ -54,7 +46,6 @@ class ProjectController extends Controller
 
     public function update(Request $request, Project $project)
     {
-        //
         $validated = $request->validate([
             'title' => 'required|string',
             'description' => 'required|string'
