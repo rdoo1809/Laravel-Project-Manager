@@ -19,6 +19,8 @@ class ProjectResource extends JsonResource
 
         return [
             'project_id' => $this->id,
+            'title' => $this->title,
+            'description' => $this->description,
             'assignees' => ['Bob Dylan']
 //            'assignees' => $this->whenLoaded('assignees');
         ];

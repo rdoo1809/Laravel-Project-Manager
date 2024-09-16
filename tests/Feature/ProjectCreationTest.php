@@ -43,25 +43,13 @@ class ProjectCreationTest extends TestCase
     {
         $validProject = Project::factory()->raw();
         $managerUser = User::factory()->manager()->create();
+        $this->followingRedirects();
 
         $response = $this->actingAs($managerUser)
             ->fromRoute('dashboard')
             ->post(route('projects.store'), $validProject)
-            ->assertJsonCount(1);
-//            ->assertJsonFragment([
-//                'title' => $validProject['title']
-//            ]);
-
-
-        $response->assertJson([
-                'newProject' => [
-                    'title' => $validProject['title'],
-                    'description' => $validProject['description'],
-                    'assignees' => ['bob dylan']
-                ]
-            ]);
-//                ->assertRedirect();
-
+            ->assertSuccessful()
+            ->assertSee($validProject['title']);
 
         $this->assertDatabaseHas('projects', $validProject);
         //assert on json

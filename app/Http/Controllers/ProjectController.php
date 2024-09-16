@@ -29,19 +29,19 @@ class ProjectController extends Controller
 
     public function store(StoreProjectRequest $request)
     {
-        $project = Project::query()->create($request->validated());
         $user = User::query()->where('id', 1)->first();
+        $project = Project::query()->create($request->validated());
 //        $project->assignees()->attach($user);
         $projectResource = ProjectResource::make($project);
 
-        return response()->json([
-            'newProject' => $projectResource
-        ]);
+//        return response()->json([
+//            'newProject' => $projectResource
+//        ]);
 //        return redirect()->route('dashboard')->with([
 //            'project' => $project
 //        ]);
 
-//        return redirect(route('dashboard'))->with('project', $project);
+        return redirect(route('dashboard'))->with('project', $project);
 
     }
 
