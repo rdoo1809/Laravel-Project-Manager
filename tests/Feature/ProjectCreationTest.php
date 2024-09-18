@@ -4,10 +4,15 @@ namespace Tests\Feature;
 
 use App\Models\Project;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ProjectCreationTest extends TestCase
 {
+    use RefreshDatabase;
+
+    protected array $validProject = [];
+
     public function setUp(): void
     {
         parent::setUp();
@@ -50,7 +55,7 @@ class ProjectCreationTest extends TestCase
         $this->assertDatabaseHas('projects', $this->validProject);
     }
 
-    public function test_a_fresh_project_only_has_manager_as_member(): void
+    public function test_a_fresh_project_only_has_manager_as_member_by_default(): void
     {
         $this->actingAs($this->managerUser)
             ->fromRoute('dashboard')
@@ -66,14 +71,35 @@ class ProjectCreationTest extends TestCase
 
     public function test_manager_can_add_regular_assignees_to_new_project(): void
     {
+        $regularUserIds = User::factory()->count(5)->create()
+            ->pluck('id')->toArray();
+
+        $newProjectPayload = [
+            ...$this->validProject,
+            'members' => $regularUserIds
+        ];
+
         $this->actingAs($this->managerUser)
             ->fromRoute('dashboard')
-            ->post(route('projects.store'), $this->validProject)
+            ->post(route('projects.store'), $newProjectPayload)
             ->assertSuccessful();
         $this->assertDatabaseHas('projects', $this->validProject);
 
         $newProject = Project::query()->where('title', $this->validProject['title'])->first();
-        $this->assertCount(2, $newProject->assignees);
-        $this->assertTrue($newProject->assignees[1]->is($this->regularUser));
+
+        $this->assertTrue(
+            !!$newProject->assignees()->where('user_id', '=', $this->managerUser->id)->first(),
+            "The manager has not been set as an assignee");
+
+        $this->assertEquals(
+            count($regularUserIds),
+            $newProject
+                ->assignees()
+                ->whereIn('users.id', $regularUserIds)
+                ->count(),
+            "At least 1 regular user has not been assigned to the project."
+        );
+
+        $this->assertCount(count($regularUserIds) + 1, $newProject->assignees, "The number of assignees does not match the requirements.");
     }
 }

@@ -30,16 +30,15 @@ class ProjectController extends Controller
     {
         $user = $request->user();
         $project = Project::query()->create($request->validated());
+        $members = $request->input('members');
 
-        //send user ids in request of selected people
-        //use the user - query for the user?
-
-        $anotherOne = User::factory()->regular()->create();
-        $assignees = [$user, $anotherOne];
-        //attach an array of users
-        foreach ($assignees as $assignee) {
-            $project->assignees()->attach($assignee);
+        if ($members) {
+            foreach ($members as $member) {
+                $project->assignees()->attach($member);
+            }
         }
+
+        $project->assignees()->attach($user);
 
         return redirect(route('dashboard'));
     }

@@ -15,7 +15,7 @@ export default {
             form: useForm({
                 title: '',
                 description: '',
-                members: 'no assignees currently',
+                members: [],
             }),
         };
     },
