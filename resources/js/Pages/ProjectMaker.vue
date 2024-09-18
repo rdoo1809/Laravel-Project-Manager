@@ -2,10 +2,14 @@
 import {Head, useForm} from "@inertiajs/vue3";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import Checkbox from "@/Components/Checkbox.vue";
 
 export default {
     name: "ProjectMaker",
-    components: {Head, AuthenticatedLayout, PrimaryButton},
+    components: {Checkbox, Head, AuthenticatedLayout, PrimaryButton},
+    props: {
+        employees: Array
+    },
     data() {
         return {
             form: useForm({
@@ -15,7 +19,13 @@ export default {
             }),
         };
     },
+    mounted() {
+        this.load();
+    },
     methods: {
+        load() {
+
+        },
         submitForm() {
             this.form.post(route('projects.store'))
             console.log(this.form);
@@ -44,8 +54,13 @@ export default {
                 </label>
 
                 <label>
-                    Assign to:
-                    <input placeholder="dropdown? available team members?" type="text"/>
+                    Available Employees:
+                    <hr>
+                    <ul>
+                        <li v-for="regular in employees">{{ regular.name }}
+                            <input class="mx-2" type="checkbox"/>
+                        </li>
+                    </ul>
                 </label>
 
                 <PrimaryButton class="mt-4">Create Project</PrimaryButton>

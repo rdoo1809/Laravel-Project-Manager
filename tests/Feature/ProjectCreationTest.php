@@ -66,16 +66,14 @@ class ProjectCreationTest extends TestCase
 
     public function test_manager_can_add_regular_assignees_to_new_project(): void
     {
-        $this->markTestSkipped();
-
         $this->actingAs($this->managerUser)
             ->fromRoute('dashboard')
             ->post(route('projects.store'), $this->validProject)
             ->assertSuccessful();
         $this->assertDatabaseHas('projects', $this->validProject);
 
-//        $newProject = Project::query()->where('title', $this->validProject['title'])->first();
-//        $this->assertCount(2, $newProject->assignees);
-//        $this->assertTrue($newProject->assignees->second()->is($regularUser));
+        $newProject = Project::query()->where('title', $this->validProject['title'])->first();
+        $this->assertCount(2, $newProject->assignees);
+        $this->assertTrue($newProject->assignees[1]->is($this->regularUser));
     }
 }

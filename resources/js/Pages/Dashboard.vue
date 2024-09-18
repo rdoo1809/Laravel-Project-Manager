@@ -1,8 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import {Head} from '@inertiajs/vue3';
-import PrimaryButton from "@/Components/PrimaryButton.vue";
-import NavLink from "@/Components/NavLink.vue";
 import axios from "axios";
 
 defineProps(['projects', 'project'])

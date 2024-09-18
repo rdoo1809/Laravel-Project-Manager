@@ -3,13 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProjectRequest;
-use App\Http\Resources\ProjectResource;
 use App\Models\Project;
 use App\Models\User;
-use http\Env\Response;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class ProjectController extends Controller
@@ -24,15 +20,26 @@ class ProjectController extends Controller
 
     public function create()
     {
-        return Inertia::render('ProjectMaker');
+        $regularEmployees = User::query()->where('is_manager', '=', '0')->get();
+        return Inertia::render('ProjectMaker', [
+            'employees' => $regularEmployees
+        ]);
     }
 
     public function store(StoreProjectRequest $request)
     {
         $user = $request->user();
-
         $project = Project::query()->create($request->validated());
-        $project->assignees()->attach($user);
+
+        //send user ids in request of selected people
+        //use the user - query for the user?
+
+        $anotherOne = User::factory()->regular()->create();
+        $assignees = [$user, $anotherOne];
+        //attach an array of users
+        foreach ($assignees as $assignee) {
+            $project->assignees()->attach($assignee);
+        }
 
         return redirect(route('dashboard'));
     }
@@ -50,7 +57,6 @@ class ProjectController extends Controller
             'title' => 'required|string',
             'description' => 'required|string'
         ]);
-
         $project->update($validated);
 
         return redirect(route('dashboard'));
@@ -63,7 +69,6 @@ class ProjectController extends Controller
 
     public function destroy(Project $project)
     {
-        //
         $project->delete();
 
         //How to refresh??
