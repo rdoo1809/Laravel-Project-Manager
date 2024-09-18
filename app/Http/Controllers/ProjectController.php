@@ -32,10 +32,8 @@ class ProjectController extends Controller
         $project = Project::query()->create($request->validated());
         $members = [$user, ...$request->input('members', [])];
 
-        if ($members) {
-            foreach ($members as $member) {
-                $project->assignees()->attach($member);
-            }
+        foreach ($members as $member) {
+            $project->assignees()->attach($member);
         }
 
 
