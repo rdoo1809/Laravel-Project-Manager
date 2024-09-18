@@ -30,7 +30,7 @@ class ProjectController extends Controller
     {
         $user = $request->user();
         $project = Project::query()->create($request->validated());
-        $members = $request->input('members');
+        $members = [$user, ...$request->input('members', [])];
 
         if ($members) {
             foreach ($members as $member) {
@@ -38,7 +38,6 @@ class ProjectController extends Controller
             }
         }
 
-        $project->assignees()->attach($user);
 
         return redirect(route('dashboard'));
     }
