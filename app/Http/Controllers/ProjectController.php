@@ -28,10 +28,8 @@ class ProjectController extends Controller
 
     public function store(StoreProjectRequest $request)
     {
-        $user = $request->user();
         $project = Project::query()->create($request->validated());
-        $members = [$user->id, ...$request->input('members', [])];
-
+        $members = [$request->user()->id, ...$request->input('members', [])];
         $project->assignees()->attach($members);
 
         return redirect(route('dashboard'));

@@ -102,4 +102,46 @@ class ProjectCreationTest extends TestCase
 
         $this->assertCount(count($regularUserIds) + 1, $newProject->assignees, "The number of assignees does not match the requirements.");
     }
+
+    public function test_project_with_invalid_title_returns_val_error(): void
+    {
+        $invalidTitleProject = [
+            'title' => '',
+            'description' => $this->validProject['description'],
+            'members' => []
+        ];
+
+        $this->actingAs($this->managerUser)
+            ->fromRoute('dashboard')
+            ->postJson(route('projects.store'), $invalidTitleProject)
+            ->assertUnprocessable();
+    }
+
+    public function test_project_with_invalid_description_returns_val_error(): void
+    {
+        $invalidDescriptionProject = [
+            'title' => $this->validProject['title'],
+            'description' => '',
+            'members' => []
+        ];
+
+        $this->actingAs($this->managerUser)
+            ->fromRoute('dashboard')
+            ->postJson(route('projects.store'), $invalidDescriptionProject)
+            ->assertUnprocessable();
+    }
+
+    public function test_project_with_invalid_ids_returns_val_error(): void
+    {
+        $invalidProjectMembers = [
+            ...$this->validProject,
+            'members' => [200000]
+        ];
+
+        $response = $this->actingAs($this->managerUser)
+            ->fromRoute('dashboard')
+            ->post(route('projects.store'), $invalidProjectMembers);
+
+        $response->assertUnprocessable();
+    }
 }

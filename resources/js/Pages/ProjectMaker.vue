@@ -3,12 +3,14 @@ import {Head, useForm} from "@inertiajs/vue3";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import Checkbox from "@/Components/Checkbox.vue";
+import axios from "axios";
 
 export default {
     name: "ProjectMaker",
     components: {Checkbox, Head, AuthenticatedLayout, PrimaryButton},
     props: {
-        employees: Array
+        employees: Array,
+        errors: Object
     },
     data() {
         return {
@@ -27,8 +29,8 @@ export default {
 
         },
         submitForm() {
-            this.form.post(route('projects.store'))
-            console.log(this.form);
+            axios.post(route('projects.store'), this.form)
+            // this.form.post(route('projects.store'))
         }
     }
 }
@@ -43,6 +45,7 @@ export default {
             <hr>
             <form @submit.prevent="submitForm"
                   class="py-12 flex flex-col space-y-4 items-center">
+                <h4>{{ errors }}</h4>
                 <label>
                     Project Name:
                     <input v-model="form.title" type="text"/>

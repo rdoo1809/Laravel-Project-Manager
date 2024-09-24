@@ -16,8 +16,10 @@ class StoreProjectRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string',
-            'description' => 'required|string'
+            'title' => ['required', 'string',],
+            'description' => ['required', 'string'],
+            'members' => ['sometimes', 'array'],
+            'members.*' => ['exists:users,id']
         ];
     }
 }
