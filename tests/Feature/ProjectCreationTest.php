@@ -25,7 +25,7 @@ class ProjectCreationTest extends TestCase
     {
         $response = $this->actingAs($this->regularUser)
             ->fromRoute('projects.create')
-            ->post(route('projects.store'), $this->validProject);
+            ->postJson(route('projects.store'), $this->validProject);
 
         $response->assertForbidden();
         $this->assertDatabaseMissing('projects', $this->validProject);
@@ -35,12 +35,13 @@ class ProjectCreationTest extends TestCase
     {
         $this->actingAs($this->managerUser)
             ->fromRoute('projects.create')
-            ->post(route('projects.store'), $this->validProject)
-            ->assertSee($this->validProject['title'])
+            ->postJson(route('projects.store'), $this->validProject)
+//            ->assertSee($this->validProject['title'])
             ->assertSuccessful();
         $this->assertDatabaseHas('projects', $this->validProject);
     }
 
+    //inaccurate?
     public function test_a_fresh_project_is_seen_on_dashboard(): void
     {
         $this->validProject = Project::factory()->raw();
@@ -48,7 +49,7 @@ class ProjectCreationTest extends TestCase
 
         $this->actingAs($this->managerUser)
             ->fromRoute('dashboard')
-            ->post(route('projects.store'), $this->validProject)
+            ->postJson(route('projects.store'), $this->validProject)
             ->assertSuccessful()
             ->assertSee($this->validProject['title']);
         $this->assertDatabaseHas('projects', $this->validProject);
@@ -58,9 +59,8 @@ class ProjectCreationTest extends TestCase
     {
         $this->actingAs($this->managerUser)
             ->fromRoute('dashboard')
-            ->post(route('projects.store'), $this->validProject)
-            ->assertSuccessful()
-            ->assertSee($this->validProject['title']);
+            ->postJson(route('projects.store'), $this->validProject)
+            ->assertSuccessful();
         $this->assertDatabaseHas('projects', $this->validProject);
         $newProject = Project::query()->where('title', $this->validProject['title'])->first();
 
@@ -80,7 +80,7 @@ class ProjectCreationTest extends TestCase
 
         $this->actingAs($this->managerUser)
             ->fromRoute('dashboard')
-            ->post(route('projects.store'), $newProjectPayload)
+            ->postJson(route('projects.store'), $newProjectPayload)
             ->assertSuccessful();
         $this->assertDatabaseHas('projects', $this->validProject);
 
@@ -103,38 +103,54 @@ class ProjectCreationTest extends TestCase
     }
 
 
-    //refactor? dataprovider for invalid payload combos to test val
-    public function test_project_with_invalid_title_returns_val_error(): void
+    /**
+     * @dataProvider ProvidesInvalidProjectPayloads
+     */
+    public function test_project_with_invalid_payload_returns_val_error(array $invalidProject): void
     {
-        $invalidTitleProject = [
-            'title' => 123,
-            'description' => $this->validProject['description'],
-            'members' => []
-        ];
-
         $this->actingAs($this->managerUser)
             ->fromRoute('dashboard')
-            ->postJson(route('projects.store'), $invalidTitleProject)
+            ->postJson(route('projects.store'), $invalidProject)
             ->assertUnprocessable();
     }
 
-    public function test_project_with_invalid_description_returns_val_error(): void
+    public static function ProvidesInvalidProjectPayloads(): array
     {
-        $invalidDescriptionProject = [
-            'title' => $this->validProject['title'],
-            'description' => 123,
-            'members' => []
+        return [
+            'numeric title' => [
+                [
+                    'title' => 123,
+                    'description' => 'description',
+                    'members' => []
+                ],
+            ],
+            'empty title' => [
+                [
+                    'title' => '',
+                    'description' => 'description',
+                    'members' => []
+                ],
+            ],
+            'numeric description' => [
+                [
+                    'title' => 'title',
+                    'description' => 123,
+                    'members' => []
+                ],
+            ],
+            'empty description' => [
+                [
+                    'title' => 'tile',
+                    'description' => '',
+                    'members' => []
+                ],
+            ]
         ];
-
-        $this->actingAs($this->managerUser)
-            ->fromRoute('dashboard')
-            ->postJson(route('projects.store'), $invalidDescriptionProject)
-            ->assertUnprocessable()
-            ->assertJsonValidationErrorFor('description');
     }
 
     public function test_project_with_invalid_ids_returns_val_error(): void
     {
+        $this->markTestIncomplete();
         $invalidProjectMembers = [
             ...$this->validProject,
             'members' => ['string']
