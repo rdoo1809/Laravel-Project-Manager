@@ -32,7 +32,7 @@ class ProjectController extends Controller
         $members = [$request->user()->id, ...$request->input('members', [])];
         $project->assignees()->attach($members);
 
-        return redirect(route('dashboard'));
+        return response()->json($project);
     }
 
     public function edit(Project $project)

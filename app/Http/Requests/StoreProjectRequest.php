@@ -9,8 +9,7 @@ class StoreProjectRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        $result = $this->user()->can('store', Project::class);
-        return $result;
+        return $this->user()->can('store', Project::class);
     }
 
     public function rules(): array
@@ -18,8 +17,8 @@ class StoreProjectRequest extends FormRequest
         return [
             'title' => ['required', 'string',],
             'description' => ['required', 'string'],
-            'members' => ['sometimes', 'array'],
-            'members.*' => ['exists:users,id']
+//            'members' => ['sometimes', 'array'],
+//            'members.*' => [Rule::exists('users', 'id')]
         ];
     }
 }

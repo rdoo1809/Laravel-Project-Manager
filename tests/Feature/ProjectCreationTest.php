@@ -19,7 +19,6 @@ class ProjectCreationTest extends TestCase
         $this->validProject = Project::factory()->raw();
         $this->managerUser = User::factory()->manager()->create();
         $this->regularUser = User::factory()->regular()->create();
-        $this->followingRedirects();
     }
 
     public function test_a_regular_user_cannot_create_a_project(): void
@@ -103,10 +102,12 @@ class ProjectCreationTest extends TestCase
         $this->assertCount(count($regularUserIds) + 1, $newProject->assignees, "The number of assignees does not match the requirements.");
     }
 
+
+    //refactor? dataprovider for invalid payload combos to test val
     public function test_project_with_invalid_title_returns_val_error(): void
     {
         $invalidTitleProject = [
-            'title' => '',
+            'title' => 123,
             'description' => $this->validProject['description'],
             'members' => []
         ];
@@ -121,26 +122,27 @@ class ProjectCreationTest extends TestCase
     {
         $invalidDescriptionProject = [
             'title' => $this->validProject['title'],
-            'description' => '',
+            'description' => 123,
             'members' => []
         ];
 
         $this->actingAs($this->managerUser)
             ->fromRoute('dashboard')
             ->postJson(route('projects.store'), $invalidDescriptionProject)
-            ->assertUnprocessable();
+            ->assertUnprocessable()
+            ->assertJsonValidationErrorFor('description');
     }
 
     public function test_project_with_invalid_ids_returns_val_error(): void
     {
         $invalidProjectMembers = [
             ...$this->validProject,
-            'members' => [200000]
+            'members' => ['string']
         ];
 
         $response = $this->actingAs($this->managerUser)
             ->fromRoute('dashboard')
-            ->post(route('projects.store'), $invalidProjectMembers);
+            ->postJson(route('projects.store'), $invalidProjectMembers);
 
         $response->assertUnprocessable();
     }

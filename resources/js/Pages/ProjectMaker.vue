@@ -28,8 +28,15 @@ export default {
         load() {
 
         },
-        submitForm() {
-            axios.post(route('projects.store'), this.form)
+        async submitForm() {
+            try {
+                await axios.post(route('projects.store'), this.form)
+                window.location.assign('/dashboard');
+                // redirect to the dashboard
+            } catch (e) {
+                alert('Something went wrong!');
+            }
+
             // this.form.post(route('projects.store'))
         }
     }
