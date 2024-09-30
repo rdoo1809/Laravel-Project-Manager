@@ -122,28 +122,28 @@ class ProjectCreationTest extends TestCase
                     'title' => 123,
                     'description' => 'description',
                     'members' => []
-                ],
+                ]
             ],
             'empty title' => [
                 [
                     'title' => '',
                     'description' => 'description',
                     'members' => []
-                ],
+                ]
             ],
             'numeric description' => [
                 [
                     'title' => 'title',
                     'description' => 123,
                     'members' => []
-                ],
+                ]
             ],
             'empty description' => [
                 [
                     'title' => 'tile',
                     'description' => '',
                     'members' => []
-                ],
+                ]
             ]
         ];
     }
