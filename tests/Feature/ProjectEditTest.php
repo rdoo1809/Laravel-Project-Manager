@@ -13,14 +13,14 @@ class ProjectEditTest extends TestCase
 
     public function test_a_regular_cannot_view_edit_screen_for_a_project(): void
     {
-        $regularUser = User::factory()->manager()->create();
+        $regularUser = User::factory()->regular()->create();
         $project = Project::factory()->create();
         $project->assignees()->attach([$regularUser->id]);
 
         $this->actingAs($regularUser)
             ->fromRoute('dashboard')
             ->get(route('projects.edit', $project))
-            ->assertUnauthorized();
+            ->assertForbidden();
     }
 
     public function test_a_manager_can_view_edit_screen_for_a_project(): void

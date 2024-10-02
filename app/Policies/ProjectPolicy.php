@@ -18,18 +18,15 @@ class ProjectPolicy
         return false;
     }
 
+    public function view(User $user, Project $project): bool
+    {
+        return $user->is_manager;
+    }
+
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
-    {
-        //
-    }
-
-    /**
-     * Determine whether the user can view the model.
-     */
-    public function view(User $user, Project $project): bool
     {
         //
     }

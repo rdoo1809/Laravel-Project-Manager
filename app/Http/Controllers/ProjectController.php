@@ -37,10 +37,17 @@ class ProjectController extends Controller
 
     public function edit(Project $project)
     {
+        $user = auth()->user();
+        if (!$user->can('view', $project)) {
+            abort(403, 'Unauthorized Action');
+        }
+        //must be a more elegant way of doing this?
+
         return Inertia::render('ProjectEditor', [
             'selectedProject' => $project
         ]);
     }
+
 
     public function update(Request $request, Project $project)
     {

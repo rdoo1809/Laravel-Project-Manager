@@ -33,7 +33,6 @@ class UserFactory extends Factory
         ];
     }
 
-
     public function manager(): static
     {
         return $this->state(fn(array $attributes) => [
