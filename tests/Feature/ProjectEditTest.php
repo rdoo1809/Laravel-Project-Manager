@@ -15,7 +15,6 @@ class ProjectEditTest extends TestCase
     {
         $regularUser = User::factory()->regular()->create();
         $project = Project::factory()->create();
-        $project->assignees()->attach([$regularUser->id]);
 
         $this->actingAs($regularUser)
             ->fromRoute('dashboard')
@@ -37,11 +36,26 @@ class ProjectEditTest extends TestCase
 
     public function test_a_manager_can_patch_an_updated_project(): void
     {
-        $this->markTestSkipped();
+        $managerUser = User::factory()->manager()->create();
+        $originalProject = Project::factory()->create([
+            'title' => 'old title',
+            'description' => 'old description'
+        ]);
+        $newPayload = [
+            'title' => 'new title',
+            'description' => 'new description',
+        ];
+
+        $this->actingAs($managerUser)
+            ->fromRoute('dashboard')
+            ->patchJson(route('projects.update', $originalProject), $newPayload)
+            ->assertRedirect();
+
+        $updatedProject = Project::query()->where('id', $originalProject->id)->first();
+
+        $this->assertNotEquals($updatedProject->title, $originalProject->title);
+        $this->assertNotEquals($updatedProject->description, $originalProject->description);
     }
 
-    public function test_updated_project_is_seen_on_dashboard(): void
-    {
-        $this->markTestSkipped();
-    }
+
 }

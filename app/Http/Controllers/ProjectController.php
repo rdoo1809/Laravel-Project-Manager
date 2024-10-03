@@ -37,8 +37,7 @@ class ProjectController extends Controller
 
     public function edit(Project $project)
     {
-        $user = auth()->user();
-        if (!$user->can('view', $project)) {
+        if (!auth()->user()->can('view', $project)) {
             abort(403, 'Unauthorized Action');
         }
         //must be a more elegant way of doing this?
