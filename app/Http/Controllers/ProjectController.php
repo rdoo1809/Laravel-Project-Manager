@@ -38,7 +38,7 @@ class ProjectController extends Controller
     public function edit(Project $project)
     {
         if (!auth()->user()->can('view', $project)) {
-            abort(403, 'Unauthorized Action');
+            abort(403, 'This is above your pay grade... work harder ;)');
         }
         //must be a more elegant way of doing this?
 
@@ -47,9 +47,12 @@ class ProjectController extends Controller
         ]);
     }
 
-
     public function update(Request $request, Project $project)
     {
+        if (!auth()->user()->can('update', $project)) {
+            abort(403, 'This is above your pay grade... work harder ;)');
+        }
+
         $validated = $request->validate([
             'title' => 'required|string',
             'description' => 'required|string'
@@ -59,13 +62,12 @@ class ProjectController extends Controller
         return redirect(route('dashboard'));
     }
 
-    public function show(Project $project)
-    {
-        //
-    }
-
     public function destroy(Project $project)
     {
+        if (!auth()->user()->can('delete', $project)) {
+            abort(403, 'This is above your pay grade... work harder ;)');
+        }
+
         $project->delete();
 
         //How to refresh??
@@ -74,5 +76,10 @@ class ProjectController extends Controller
 //            'projects' => $projects
 //        ]);
         //return Inertia::location(route('dashboard'));
+    }
+
+    public function show(Project $project)
+    {
+        //
     }
 }

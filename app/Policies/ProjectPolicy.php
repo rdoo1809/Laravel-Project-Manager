@@ -15,10 +15,15 @@ class ProjectPolicy
 
     public function update(User $user, Project $project): bool
     {
-        return false;
+        return $user->is_manager;
     }
 
     public function view(User $user, Project $project): bool
+    {
+        return $user->is_manager;
+    }
+
+    public function delete(User $user, Project $project): bool
     {
         return $user->is_manager;
     }
@@ -35,14 +40,6 @@ class ProjectPolicy
      * Determine whether the user can create models.
      */
     public function create(User $user): bool
-    {
-        //
-    }
-
-    /**
-     * Determine whether the user can delete the model.
-     */
-    public function delete(User $user, Project $project): bool
     {
         //
     }

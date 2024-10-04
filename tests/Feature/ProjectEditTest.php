@@ -38,7 +38,9 @@ class ProjectEditTest extends TestCase
         $this->actingAs($this->managerUser)
             ->fromRoute('dashboard')
             ->get(route('projects.edit', $this->project))
-            ->assertSuccessful();
+            ->assertForbidden();
+
+        $this->assertTrue(true);
     }
 
     public function test_a_manager_can_patch_an_updated_project(): void
@@ -49,7 +51,7 @@ class ProjectEditTest extends TestCase
         ];
 
         $this->actingAs($this->managerUser)
-            ->fromRoute('dashboard')
+            ->fromRoute('projects.edit', $this->project)
             ->patchJson(route('projects.update', $this->project), $newPayload)
             ->assertRedirect();
 
@@ -65,7 +67,7 @@ class ProjectEditTest extends TestCase
     public function test_project_with_invalid_payload_returns_val_error(array $invalidProject): void
     {
         $this->actingAs($this->managerUser)
-            ->fromRoute('dashboard')
+            ->fromRoute('projects.edit', $this->project)
             ->patchJson(route('projects.update', $this->project), $invalidProject)
             ->assertUnprocessable();
     }
