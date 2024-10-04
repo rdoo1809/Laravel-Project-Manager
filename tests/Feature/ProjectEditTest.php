@@ -11,50 +11,52 @@ class ProjectEditTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected Project $project;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->managerUser = User::factory()->manager()->create();
+        $this->project = Project::factory()->create([
+            'title' => 'old title',
+            'description' => 'old description'
+        ]);
+    }
+
     public function test_a_regular_cannot_view_edit_screen_for_a_project(): void
     {
         $regularUser = User::factory()->regular()->create();
-        $project = Project::factory()->create();
 
         $this->actingAs($regularUser)
             ->fromRoute('dashboard')
-            ->get(route('projects.edit', $project))
+            ->get(route('projects.edit', $this->project))
             ->assertForbidden();
     }
 
     public function test_a_manager_can_view_edit_screen_for_a_project(): void
     {
-        $managerUser = User::factory()->manager()->create();
-        $project = Project::factory()->create();
-        $project->assignees()->attach([$managerUser->id]);
-
-        $this->actingAs($managerUser)
+        $this->actingAs($this->managerUser)
             ->fromRoute('dashboard')
-            ->get(route('projects.edit', $project))
+            ->get(route('projects.edit', $this->project))
             ->assertSuccessful();
     }
 
     public function test_a_manager_can_patch_an_updated_project(): void
     {
-        $managerUser = User::factory()->manager()->create();
-        $originalProject = Project::factory()->create([
-            'title' => 'old title',
-            'description' => 'old description'
-        ]);
         $newPayload = [
             'title' => 'new title',
             'description' => 'new description',
         ];
 
-        $this->actingAs($managerUser)
+        $this->actingAs($this->managerUser)
             ->fromRoute('dashboard')
-            ->patchJson(route('projects.update', $originalProject), $newPayload)
+            ->patchJson(route('projects.update', $this->project), $newPayload)
             ->assertRedirect();
 
-        $updatedProject = Project::query()->where('id', $originalProject->id)->first();
+        $updatedProject = Project::query()->where('id', $this->project->id)->first();
 
-        $this->assertNotEquals($updatedProject->title, $originalProject->title);
-        $this->assertNotEquals($updatedProject->description, $originalProject->description);
+        $this->assertNotEquals($updatedProject->title, $this->project->title);
+        $this->assertNotEquals($updatedProject->description, $this->project->description);
     }
 
     /**
@@ -62,12 +64,9 @@ class ProjectEditTest extends TestCase
      */
     public function test_project_with_invalid_payload_returns_val_error(array $invalidProject): void
     {
-        $managerUser = User::factory()->manager()->create();
-        $project = Project::factory()->create();
-
-        $this->actingAs($managerUser)
+        $this->actingAs($this->managerUser)
             ->fromRoute('dashboard')
-            ->patchJson(route('projects.update', $project), $invalidProject)
+            ->patchJson(route('projects.update', $this->project), $invalidProject)
             ->assertUnprocessable();
     }
 
