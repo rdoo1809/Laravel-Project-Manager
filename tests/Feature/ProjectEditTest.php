@@ -57,5 +57,52 @@ class ProjectEditTest extends TestCase
         $this->assertNotEquals($updatedProject->description, $originalProject->description);
     }
 
+    /**
+     * @dataProvider ProvidesInvalidProjectPayloads
+     */
+    public function test_project_with_invalid_payload_returns_val_error(array $invalidProject): void
+    {
+        $managerUser = User::factory()->manager()->create();
+        $project = Project::factory()->create();
+
+        $this->actingAs($managerUser)
+            ->fromRoute('dashboard')
+            ->patchJson(route('projects.update', $project), $invalidProject)
+            ->assertUnprocessable();
+    }
+
+    public static function ProvidesInvalidProjectPayloads(): array
+    {
+        return [
+            'numeric title' => [
+                [
+                    'title' => 123,
+                    'description' => 'description',
+                    'members' => []
+                ]
+            ],
+            'empty title' => [
+                [
+                    'title' => '',
+                    'description' => 'description',
+                    'members' => []
+                ]
+            ],
+            'numeric description' => [
+                [
+                    'title' => 'title',
+                    'description' => 123,
+                    'members' => []
+                ]
+            ],
+            'empty description' => [
+                [
+                    'title' => 'tile',
+                    'description' => '',
+                    'members' => []
+                ]
+            ]
+        ];
+    }
 
 }
