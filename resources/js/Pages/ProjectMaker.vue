@@ -32,12 +32,10 @@ export default {
             try {
                 await axios.post(route('projects.store'), this.form)
                 window.location.assign('/dashboard');
-                // redirect to the dashboard
             } catch (e) {
+                this.errors = e.response.message
                 alert('Something went wrong!');
             }
-
-            // this.form.post(route('projects.store'))
         }
     }
 }
@@ -68,7 +66,7 @@ export default {
                     <hr>
                     <ul>
                         <li v-for="regular in employees">{{ regular.name }}
-                            <input class="mx-2" type="checkbox"/>
+                            <input v-model="form.members" :value="regular.id" class="mx-2" type="checkbox"/>
                         </li>
                     </ul>
                 </label>

@@ -8,9 +8,13 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 
-Route::resource('projects', ProjectController::class)
-    ->only(['create', 'store', 'edit', 'update', 'destroy'])
-    ->middleware(['auth', 'verified']);
+Route::group(['middleware' => ['auth', 'verified']], function () {
+    Route::resource('projects', ProjectController::class)
+        ->only(['create', 'store', 'destroy']);
+
+    Route::resource('projects', ProjectController::class)
+        ->only(['edit', 'update'])->middleware('can:update,project');
+});
 
 Route::get('/dashboard', function () {
     $projects = Project::all();

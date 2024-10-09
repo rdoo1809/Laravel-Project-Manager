@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Feature\Project;
 
 use App\Models\Project;
 use App\Models\User;
@@ -19,6 +19,20 @@ class ProjectCreationTest extends TestCase
         $this->validProject = Project::factory()->raw();
         $this->managerUser = User::factory()->manager()->create();
         $this->regularUser = User::factory()->regular()->create();
+    }
+
+    public function test_all_projects_are_seen_on_dashboard(): void
+    {
+        // ToDo finish test
+
+        $projectCollection = Project::factory()->count(5)->create();
+
+        $response = $this->actingAs($this->managerUser)
+            ->getJson(route('dashboard'))
+            ->assertSuccessful();
+
+        //act - access dashboard route
+        //assert - count of projects queried matches what is created
     }
 
     public function test_a_regular_user_cannot_create_a_project(): void
@@ -41,7 +55,7 @@ class ProjectCreationTest extends TestCase
         $this->assertDatabaseHas('projects', $this->validProject);
     }
 
-    //inaccurate?
+    // TODO inaccurate?
     public function test_a_fresh_project_is_seen_on_dashboard(): void
     {
         $this->validProject = Project::factory()->raw();
@@ -148,7 +162,7 @@ class ProjectCreationTest extends TestCase
         ];
     }
 
-    public function test_project_with_invalid_ids_returns_val_error(): void
+    public function test_project_with_invalid_memberb_ids_returns_val_error(): void
     {
         $this->markTestIncomplete();
         $invalidProjectMembers = [

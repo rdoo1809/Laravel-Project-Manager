@@ -40,10 +40,12 @@ class ProjectController extends Controller
         if (!auth()->user()->can('view', $project)) {
             abort(403, 'This is above your pay grade... work harder ;)');
         }
-        //must be a more elegant way of doing this?
+
+        $members = $project->assignees;
 
         return Inertia::render('ProjectEditor', [
-            'selectedProject' => $project
+            'selectedProject' => $project,
+            'projectMembers' => $members
         ]);
     }
 
@@ -70,6 +72,7 @@ class ProjectController extends Controller
 
         $project->delete();
 
+        // Todo
         //How to refresh??
 //        $projects = Project::all();
 //        return Inertia::render('dashboard', [

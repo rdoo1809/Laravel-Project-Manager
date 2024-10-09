@@ -17,15 +17,25 @@ export default {
             form: useForm({
                 title: this.selectedProject.title,
                 description: this.selectedProject.description,
-                members: 'no assignees currently',
+                members: this.regularMembers(this.selectedProject.assignees),
             }),
+            projectManager: this.manager(this.selectedProject.assignees)
         };
     },
     methods: {
         submitForm() {
-             this.form.put(route('projects.update', this.selectedProject))
-             console.log(this.form);
+            this.form.put(route('projects.update', this.selectedProject))
+            console.log(this.form);
+        },
+        regularMembers(members) {
+            return members.filter(member => member.is_manager === 0);
+        },
+        manager(members) {
+            return members.filter(member => member.is_manager === 1);
         }
+    },
+    computed: {
+
     }
 }
 </script>
@@ -47,12 +57,19 @@ export default {
 
                 <label>
                     Description:
-                    <input v-model="form.description" type="text"/>
+                    <textarea v-model="form.description" type="text"/>
                 </label>
 
                 <label>
-                    Assign to:
-                    <input placeholder="dropdown? available team members?" type="text"/>
+                    Project Manager:
+                    {{ projectManager[0].name }}
+                </label>
+
+                <label>
+                    Project Team:
+                    <ul>
+                        <li v-for="regular in form.members">{{ regular.name }}</li>
+                    </ul>
                 </label>
 
                 <PrimaryButton class="mt-4">Update Project</PrimaryButton>

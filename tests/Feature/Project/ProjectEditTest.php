@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Feature\Project;
 
 use App\Models\Project;
 use App\Models\User;
@@ -26,7 +26,6 @@ class ProjectEditTest extends TestCase
     public function test_a_regular_cannot_view_edit_screen_for_a_project(): void
     {
         $regularUser = User::factory()->regular()->create();
-
         $this->actingAs($regularUser)
             ->fromRoute('dashboard')
             ->get(route('projects.edit', $this->project))
@@ -35,12 +34,12 @@ class ProjectEditTest extends TestCase
 
     public function test_a_manager_can_view_edit_screen_for_a_project(): void
     {
+        //ToDo: why is this erroring, same test as above
+
         $this->actingAs($this->managerUser)
             ->fromRoute('dashboard')
             ->get(route('projects.edit', $this->project))
-            ->assertForbidden();
-
-        $this->assertTrue(true);
+            ->assertSuccessful();
     }
 
     public function test_a_manager_can_patch_an_updated_project(): void
