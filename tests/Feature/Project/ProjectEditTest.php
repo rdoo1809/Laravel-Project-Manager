@@ -60,6 +60,19 @@ class ProjectEditTest extends TestCase
         $this->assertNotEquals($updatedProject->description, $this->project->description);
     }
 
+    public function test_members_can_be_removed_from_project(): void
+    {
+        //arrange
+        //existing project w a regular member
+
+
+    }
+
+    public function test_members_can_be_added_to_project(): void
+    {
+        $this->markTestIncomplete();
+    }
+
     /**
      * @dataProvider ProvidesInvalidProjectPayloads
      */

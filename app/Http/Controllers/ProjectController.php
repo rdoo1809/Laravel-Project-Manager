@@ -42,10 +42,15 @@ class ProjectController extends Controller
         }
 
         $members = $project->assignees;
+        $employees = User::query()
+            ->where('is_manager', 0)
+            ->get()
+            ->filter(fn($emp) => !$emp->projects->contains($project->id));
 
         return Inertia::render('ProjectEditor', [
             'selectedProject' => $project,
-            'projectMembers' => $members
+            'projectMembers' => $members,
+            'allEmployees' => $employees
         ]);
     }
 
