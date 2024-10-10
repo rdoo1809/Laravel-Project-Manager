@@ -56,6 +56,7 @@ class ProjectController extends Controller
 
     public function update(Request $request, Project $project)
     {
+        //todo - refactor to use form request
         if (!auth()->user()->can('update', $project)) {
             abort(403, 'This is above your pay grade... work harder ;)');
         }

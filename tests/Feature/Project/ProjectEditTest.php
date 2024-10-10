@@ -34,8 +34,6 @@ class ProjectEditTest extends TestCase
 
     public function test_a_manager_can_view_edit_screen_for_a_project(): void
     {
-        //ToDo: why is this erroring, same test as above
-
         $this->actingAs($this->managerUser)
             ->fromRoute('dashboard')
             ->get(route('projects.edit', $this->project))
@@ -62,6 +60,7 @@ class ProjectEditTest extends TestCase
 
     public function test_members_can_be_removed_from_project(): void
     {
+        $this->markTestIncomplete();
         //arrange
         //existing project w a regular member
 

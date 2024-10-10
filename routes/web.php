@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
-use App\Models\Project;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -16,12 +15,9 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
         ->only(['edit', 'update'])->middleware('can:update,project');
 });
 
-Route::get('/dashboard', function () {
-    $projects = Project::all();
-    return Inertia::render('Dashboard', [
-        'projects' => $projects
-    ]);
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [ProjectController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
