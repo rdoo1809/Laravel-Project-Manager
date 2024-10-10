@@ -37,9 +37,9 @@ class ProjectController extends Controller
 
     public function edit(Project $project)
     {
-        if (!auth()->user()->can('view', $project)) {
-            abort(403, 'This is above your pay grade... work harder ;)');
-        }
+//        if (!auth()->user()->can('view', $project)) {
+//            abort(403, 'This is above your pay grade... work harder ;)');
+//        }
 
         $members = $project->assignees;
         $employees = User::query()
