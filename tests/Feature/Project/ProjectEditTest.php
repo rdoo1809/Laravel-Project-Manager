@@ -16,6 +16,7 @@ class ProjectEditTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->followingRedirects();
         $this->managerUser = User::factory()->manager()->create();
         $this->project = Project::factory()->create([
             'title' => 'old title',
@@ -62,14 +63,40 @@ class ProjectEditTest extends TestCase
     {
         $this->markTestIncomplete();
         //arrange
-        //existing project w a regular member
+        $project = Project::factory()->create();
+        $manager = User::factory()->manager()->create();
+        $regular = User::factory()->regular()->create();
+        $project->assignees()->attach([$manager->id, $regular->id]);
+
+        $newPayload = [
+            ...$project
+        ];
+
+        $this->actingAs($manager)
+            ->fromRoute('projects.edit')
+            ->post(route('projects.update', $project), $newPayload)
+            ->assertSuccessful();
 
 
+        $this->assertTrue($project->assignees->count() === 2);
     }
 
     public function test_members_can_be_added_to_project(): void
     {
-        $this->markTestIncomplete();
+        $this->project->assignees()->attach([$this->managerUser->id]);
+        $regular = User::factory()->regular()->create();
+        $newPayload = [
+            'title' => $this->project->title,
+            'description' => $this->project->description,
+            'members' => [...$this->project->assignees->pluck('id'), $regular->id]
+        ];
+
+        $this->actingAs($this->managerUser)
+            ->fromRoute('projects.edit', $this->project)
+            ->patchJson(route('projects.update', $this->project), $newPayload)
+            ->assertSuccessful();
+
+        $this->assertEquals(2, $this->project->refresh()->assignees->count());
     }
 
     /**

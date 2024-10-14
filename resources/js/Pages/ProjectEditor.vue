@@ -2,7 +2,6 @@
 import {Head, useForm} from "@inertiajs/vue3";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import axios from "axios";
 
 export default {
     name: "ProjectEditor",
@@ -13,7 +12,7 @@ export default {
             required: true
         },
         allEmployees: {
-            type: Array,
+            type: Object,
             required: true
         }
     },
@@ -22,27 +21,17 @@ export default {
             form: useForm({
                 title: this.selectedProject.title,
                 description: this.selectedProject.description,
-                members: this.regularMembers(this.selectedProject.assignees),
+                members: this.selectedProject.assignees,
             }),
-            projectManager: this.manager(this.selectedProject.assignees),
-            unassignedEmployees: this.availableEmployees(this.allEmployees)
         };
     },
     methods: {
-        axios,
         submitForm() {
-            // this.form.put(route('projects.update', this.selectedProject))
+            this.form.put(route('projects.update', this.selectedProject))
             console.log(this.form);
         },
-        //todo - possible refactor? one method vs three to decide this data
-        regularMembers(members) {
-            return members.filter(member => member.is_manager === 0);
-        },
-        manager(members) {
-            return members.filter(member => member.is_manager === 1);
-        },
-        availableEmployees() {
-
+        logger() {
+            console.log(this.form.members)
         }
     },
 }
@@ -86,20 +75,30 @@ export default {
                                   @submit.prevent="submitForm">
                                 <label>
                                     <strong>Project Manager:</strong>
-                                    {{ projectManager[0].name }}
+                                    {{ selectedProject.assignees[0].name }}
                                 </label>
 
                                 <strong>Project Team:</strong>
                                 <label>
                                     <ul>
-                                        <li v-for="regular in form.members">{{ regular.name }}</li>
+                                        <li v-for="regular in selectedProject.assignees.filter(e => e.is_manager === 0)"
+                                            :key="regular.id">
+                                            {{ regular.name }}
+                                            <input v-model="form.members" :value="regular"
+                                                   class="mx-2" type="checkbox" @click="logger()"/>
+                                        </li>
                                     </ul>
                                 </label>
 
                                 <label>
-                                    Add Members to This Project
+                                    <strong>Add Members to This Project</strong>
                                     <ul>
-                                        <li v-for="availble in this.allEmployees">{{ availble.name }}</li>
+                                        <li v-for="available in this.allEmployees">
+                                            {{ available.name }}
+                                            <input v-model="form.members"
+                                                   :value="available"
+                                                   class="mx-2" type="checkbox" @click="logger()"/>
+                                        </li>
                                     </ul>
                                 </label>
                             </form>

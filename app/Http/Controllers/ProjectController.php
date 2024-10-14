@@ -37,9 +37,9 @@ class ProjectController extends Controller
 
     public function edit(Project $project)
     {
-//        if (!auth()->user()->can('view', $project)) {
-//            abort(403, 'This is above your pay grade... work harder ;)');
-//        }
+        if (!auth()->user()->can('view', $project)) {
+            abort(403, 'This is above your pay grade... work harder ;)');
+        }
 
         $members = $project->assignees;
         $employees = User::query()
@@ -65,6 +65,14 @@ class ProjectController extends Controller
             'title' => 'required|string',
             'description' => 'required|string'
         ]);
+
+        $members = $request->input('members', []);
+        foreach ($members as $member) {
+            if (!$project->assignees->contains($member)) {
+                $project->assignees()->attach($member);
+            }
+        }
+
         $project->update($validated);
 
         return redirect(route('dashboard'));

@@ -50,7 +50,6 @@ class ProjectCreationTest extends TestCase
         $this->actingAs($this->managerUser)
             ->fromRoute('projects.create')
             ->postJson(route('projects.store'), $this->validProject)
-//            ->assertSee($this->validProject['title'])
             ->assertSuccessful();
         $this->assertDatabaseHas('projects', $this->validProject);
     }

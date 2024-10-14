@@ -8,16 +8,13 @@ use Inertia\Inertia;
 
 
 Route::group(['middleware' => ['auth', 'verified']], function () {
-    Route::resource('projects', ProjectController::class)
-        ->only(['create', 'store', 'destroy']);
 
     Route::resource('projects', ProjectController::class)
-        ->only(['edit', 'update'])->middleware('can:update,project');
+        ->only(['create', 'store', 'edit', 'update', 'destroy']);
+
+    Route::get('/dashboard', [ProjectController::class, 'index'])
+        ->name('dashboard');
 });
-
-Route::get('/dashboard', [ProjectController::class, 'index'])
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
