@@ -21,7 +21,8 @@ export default {
             form: useForm({
                 title: this.selectedProject.title,
                 description: this.selectedProject.description,
-                members: this.selectedProject.assignees,
+                members: [],
+                removeMembers: []
             }),
         };
     },
@@ -29,9 +30,6 @@ export default {
         submitForm() {
             this.form.put(route('projects.update', this.selectedProject))
             console.log(this.form);
-        },
-        logger() {
-            console.log(this.form.members)
         }
     },
 }
@@ -78,14 +76,15 @@ export default {
                                     {{ selectedProject.assignees[0].name }}
                                 </label>
 
-                                <strong>Project Team:</strong>
+
+                                <p><strong>Project Team:</strong> Select checkbox to remove from project</p>
                                 <label>
                                     <ul>
                                         <li v-for="regular in selectedProject.assignees.filter(e => e.is_manager === 0)"
                                             :key="regular.id">
                                             {{ regular.name }}
-                                            <input v-model="form.members" :value="regular"
-                                                   class="mx-2" type="checkbox" @click="logger()"/>
+                                            <input v-model="form.removeMembers" :value="regular.id"
+                                                   class="mx-2" type="checkbox"/>
                                         </li>
                                     </ul>
                                 </label>
@@ -96,8 +95,8 @@ export default {
                                         <li v-for="available in this.allEmployees">
                                             {{ available.name }}
                                             <input v-model="form.members"
-                                                   :value="available"
-                                                   class="mx-2" type="checkbox" @click="logger()"/>
+                                                   :value="available.id"
+                                                   class="mx-2" type="checkbox"/>
                                         </li>
                                     </ul>
                                 </label>

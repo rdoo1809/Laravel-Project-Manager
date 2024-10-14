@@ -72,14 +72,18 @@ class ProjectController extends Controller
                 $project->assignees()->attach($member);
             }
         }
-
+        // todo - refactor to user attachUser detachUser methods in model class?
         $removeMembers = $request->input('removeMembers', []);
         foreach ($removeMembers as $member) {
             $project->assignees()->detach($member);
         }
 
         $project->update($validated);
-        return redirect(route('dashboard'));
+        return json_encode([
+            'project' => $project,
+            'members' => $project->assignees
+        ]);
+//        return redirect(route('dashboard'));
     }
 
     public function destroy(Project $project)

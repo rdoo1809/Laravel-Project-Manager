@@ -27,8 +27,7 @@ class ProjectEditTest extends TestCase
 
     public function test_a_regular_cannot_view_edit_screen_for_a_project(): void
     {
-        $regularUser = User::factory()->regular()->create();
-        $this->actingAs($regularUser)
+        $this->actingAs($this->regular)
             ->fromRoute('dashboard')
             ->get(route('projects.edit', $this->project))
             ->assertForbidden();
