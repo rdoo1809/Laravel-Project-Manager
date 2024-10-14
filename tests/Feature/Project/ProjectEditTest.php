@@ -18,6 +18,7 @@ class ProjectEditTest extends TestCase
         parent::setUp();
         $this->followingRedirects();
         $this->managerUser = User::factory()->manager()->create();
+        $this->regular = User::factory()->regular()->create();
         $this->project = Project::factory()->create([
             'title' => 'old title',
             'description' => 'old description'
@@ -51,7 +52,7 @@ class ProjectEditTest extends TestCase
         $this->actingAs($this->managerUser)
             ->fromRoute('projects.edit', $this->project)
             ->patchJson(route('projects.update', $this->project), $newPayload)
-            ->assertRedirect();
+            ->assertSuccessful();
 
         $updatedProject = Project::query()->where('id', $this->project->id)->first();
 
@@ -59,36 +60,13 @@ class ProjectEditTest extends TestCase
         $this->assertNotEquals($updatedProject->description, $this->project->description);
     }
 
-    public function test_members_can_be_removed_from_project(): void
-    {
-        $this->markTestIncomplete();
-        //arrange
-        $project = Project::factory()->create();
-        $manager = User::factory()->manager()->create();
-        $regular = User::factory()->regular()->create();
-        $project->assignees()->attach([$manager->id, $regular->id]);
-
-        $newPayload = [
-            ...$project
-        ];
-
-        $this->actingAs($manager)
-            ->fromRoute('projects.edit')
-            ->post(route('projects.update', $project), $newPayload)
-            ->assertSuccessful();
-
-
-        $this->assertTrue($project->assignees->count() === 2);
-    }
-
     public function test_members_can_be_added_to_project(): void
     {
         $this->project->assignees()->attach([$this->managerUser->id]);
-        $regular = User::factory()->regular()->create();
         $newPayload = [
             'title' => $this->project->title,
             'description' => $this->project->description,
-            'members' => [...$this->project->assignees->pluck('id'), $regular->id]
+            'members' => [...$this->project->assignees->pluck('id'), $this->regular->id]
         ];
 
         $this->actingAs($this->managerUser)
@@ -97,6 +75,24 @@ class ProjectEditTest extends TestCase
             ->assertSuccessful();
 
         $this->assertEquals(2, $this->project->refresh()->assignees->count());
+    }
+
+    public function test_members_can_be_removed_from_project(): void
+    {
+        $this->project->assignees()->attach([$this->managerUser->id, $this->regular->id]);
+
+        $newPayload = [
+            ...$this->project->toArray(),
+            'removeMembers' => [$this->regular->id]
+        ];
+
+        $this->actingAs($this->managerUser)
+            ->fromRoute('projects.edit', $this->project)
+            ->patchJson(route('projects.update', $this->project), $newPayload)
+            ->assertSuccessful();
+
+        $this->assertEquals(1, $this->project->refresh()->assignees->count());
+        $this->assertNotTrue($this->project->refresh()->assignees->contains($this->regular));
     }
 
     /**

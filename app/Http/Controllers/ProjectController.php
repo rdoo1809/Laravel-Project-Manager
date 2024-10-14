@@ -73,8 +73,12 @@ class ProjectController extends Controller
             }
         }
 
-        $project->update($validated);
+        $removeMembers = $request->input('removeMembers', []);
+        foreach ($removeMembers as $member) {
+            $project->assignees()->detach($member);
+        }
 
+        $project->update($validated);
         return redirect(route('dashboard'));
     }
 
