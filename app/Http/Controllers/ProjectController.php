@@ -67,23 +67,12 @@ class ProjectController extends Controller
         ]);
 
         $members = $request->input('members', []);
-        foreach ($members as $member) {
-            if (!$project->assignees->contains($member)) {
-                $project->assignees()->attach($member);
-            }
-        }
-        // todo - refactor to user attachUser detachUser methods in model class?
         $removeMembers = $request->input('removeMembers', []);
-        foreach ($removeMembers as $member) {
-            $project->assignees()->detach($member);
-        }
+        $project->addMembers($members);
+        $project->removeMembers($removeMembers);
 
         $project->update($validated);
-        return json_encode([
-            'project' => $project,
-            'members' => $project->assignees
-        ]);
-//        return redirect(route('dashboard'));
+        return redirect(route('dashboard'));
     }
 
     public function destroy(Project $project)

@@ -8,7 +8,6 @@ use Inertia\Inertia;
 
 
 Route::group(['middleware' => ['auth', 'verified']], function () {
-
     Route::resource('projects', ProjectController::class)
         ->only(['create', 'store', 'edit', 'update', 'destroy']);
 
