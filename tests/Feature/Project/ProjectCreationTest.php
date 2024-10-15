@@ -16,23 +16,10 @@ class ProjectCreationTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+        $this->followingRedirects();
         $this->validProject = Project::factory()->raw();
         $this->managerUser = User::factory()->manager()->create();
         $this->regularUser = User::factory()->regular()->create();
-    }
-
-    public function test_all_projects_are_seen_on_dashboard(): void
-    {
-        // ToDo finish test
-
-        $projectCollection = Project::factory()->count(5)->create();
-
-        $response = $this->actingAs($this->managerUser)
-            ->getJson(route('dashboard'))
-            ->assertSuccessful();
-
-        //act - access dashboard route
-        //assert - count of projects queried matches what is created
     }
 
     public function test_a_regular_user_cannot_create_a_project(): void
@@ -54,17 +41,17 @@ class ProjectCreationTest extends TestCase
         $this->assertDatabaseHas('projects', $this->validProject);
     }
 
-    // TODO inaccurate?
     public function test_a_fresh_project_is_seen_on_dashboard(): void
     {
-        $this->validProject = Project::factory()->raw();
-        $this->managerUser = User::factory()->manager()->create();
-
         $this->actingAs($this->managerUser)
             ->fromRoute('dashboard')
             ->postJson(route('projects.store'), $this->validProject)
             ->assertSuccessful()
-            ->assertSee($this->validProject['title']);
+            ->assertInertia(fn($page) => $page->component('Dashboard')
+                ->has('projects', 1)
+                ->where('projects.0.title', $this->validProject['title'])
+            );
+
         $this->assertDatabaseHas('projects', $this->validProject);
     }
 

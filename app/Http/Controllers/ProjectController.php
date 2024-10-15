@@ -12,7 +12,12 @@ class ProjectController extends Controller
 {
     public function index()
     {
-        $projects = Project::all();
+        if (auth()->user()->can('viewAny', Project::class)) {
+            $projects = Project::all();
+        } else {
+            $projects = auth()->user()->projects;
+        }
+
         return Inertia::render('Dashboard', [
             'projects' => $projects
         ]);
@@ -32,7 +37,7 @@ class ProjectController extends Controller
         $members = [$request->user()->id, ...$request->input('members', [])];
         $project->assignees()->attach($members);
 
-        return response()->json($project);
+        return redirect(route('dashboard'));
     }
 
     public function edit(Project $project)
