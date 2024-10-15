@@ -17,7 +17,6 @@ class Project extends Model
 
     public function assignees(): belongsToMany
     {
-        //this project belongs to many users
         return $this->belongsToMany(User::class);
     }
 

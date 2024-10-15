@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProjectRequest;
+use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Project;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class ProjectController extends Controller
@@ -54,24 +54,14 @@ class ProjectController extends Controller
         ]);
     }
 
-    public function update(Request $request, Project $project)
+    public function update(UpdateProjectRequest $request, Project $project)
     {
-        //todo - refactor to use form request
-        if (!auth()->user()->can('update', $project)) {
-            abort(403, 'This is above your pay grade... work harder ;)');
-        }
-
-        $validated = $request->validate([
-            'title' => 'required|string',
-            'description' => 'required|string'
-        ]);
-
         $members = $request->input('members', []);
         $removeMembers = $request->input('removeMembers', []);
         $project->addMembers($members);
         $project->removeMembers($removeMembers);
 
-        $project->update($validated);
+        $project->update($request->validated());
         return redirect(route('dashboard'));
     }
 
