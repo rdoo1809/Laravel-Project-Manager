@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Project extends Model
 {
@@ -18,6 +19,11 @@ class Project extends Model
     public function assignees(): belongsToMany
     {
         return $this->belongsToMany(User::class);
+    }
+
+    public function tasks(): hasMany
+    {
+        return $this->hasMany(Task::class);
     }
 
     public function addMembers(array $members): void
