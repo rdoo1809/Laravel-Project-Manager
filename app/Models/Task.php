@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Task extends Model
 {
@@ -12,4 +13,12 @@ class Task extends Model
     protected $fillable = [
         'task'
     ];
+
+
+    public function assignees(): belongsToMany
+    {
+        return $this->belongsToMany(User::class);
+    }
+
+
 }

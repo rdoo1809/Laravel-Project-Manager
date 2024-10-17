@@ -31,11 +31,13 @@ class User extends Authenticatable
         ];
     }
 
-
     public function projects(): belongsToMany
     {
-        //user belongs to many projects
         return $this->belongsToMany(Project::class);
     }
 
+    public function tasks(): belongsToMany
+    {
+        return $this->belongsToMany(Task::class);
+    }
 }

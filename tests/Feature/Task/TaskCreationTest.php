@@ -6,54 +6,64 @@ use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 
 class TaskCreationTest extends TestCase
 {
     use RefreshDatabase;
-    public function test_task_can_be_created_for_project(): void
+
+    protected function setUp(): void
     {
-        $manager = User::factory()->manager()->create();
-        $project = Project::factory()->create();
-        $project->assignees()->attach([$manager->id]);
-
-        $payload = [
-            'task' => 'get tests passing'
-        ];
-        $this->assertDatabaseMissing('tasks', [
-            'project_id' => $project->id,
-            'task' => $payload['task']
-        ]);
-
-        $this->actingAs($manager)
-            ->postJson(route('project.tasks.store', $project), [
-                'task' => $payload['task']
-            ])
-            ->assertSuccessful();
-
-        $this->assertDatabaseHas('tasks', [
-            'project_id' => $project->id,
-            'task' => 'get tests passing'
-        ]);
+        parent::setUp();
+        $this->manager = User::factory()->manager()->create();
+        $this->project = Project::factory()->create();
+        $this->project->assignees()->attach([$this->manager->id]);
     }
 
-    public function test_existing_project_task_can_be_assigned_to_project_member(): void
+    //Todo - rn we only add members after task creation - can support both? do we have the tech
+    public function test_task_can_be_created_for_project(): void
     {
-        //arrange
+        $rawTask = Task::factory()->raw([
+            'project_id' => $this->project->id
+        ]);
+
+        $this->assertDatabaseMissing('tasks', $rawTask);
+
+        $this->actingAs($this->manager)
+            ->postJson(route('project.tasks.store', $this->project), $rawTask)
+            ->assertSuccessful();
+
+        $this->assertDatabaseHas('tasks', $rawTask);
+    }
+
+    public function test_existing_project_task_can_be_assigned_to_project_members(): void
+    {
         $manager = User::factory()->manager()->create();
         $regular = User::factory()->regular()->create();
         $project = Project::factory()->create();
         $project->assignees()->attach([$manager->id, $regular->id]);
-        $task = Task::factory()->create(['project_id' => $project]);
+        $task = Task::factory()->create(['project_id' => $project->id]);
 
-        $task->users()->append();
-        //have a task already stored - append a user to it
+        $pivotPayload = [
+            'assignees' => [$regular->id]
+        ];
 
-        //act
+        $this->actingAs($manager)
+            ->fromRoute('projects.edit', $project)
+            ->postJson(route('project.tasks.assign', $task), $pivotPayload)
+            ->assertSuccessful()
+            ->assertJson(
+                fn(AssertableJson $json) => $json
+                    ->has('task')
+                    ->has('assignees', 1)
+            );
+        $this->assertDatabaseCount('task_user', 1);
+    }
 
-
-        //assert
-        $this->assertTrue(true);
+    public function test_non_project_members_cannot_be_assigned_to_task(): void
+    {
+        $this->markTestIncomplete();
     }
 
     public function test_a_project_is_loaded_with_tasks(): void

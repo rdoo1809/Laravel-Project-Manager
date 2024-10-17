@@ -15,7 +15,11 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::get('/dashboard', [ProjectController::class, 'index'])
         ->name('dashboard');
 
-    Route::post('projects/{project}/tasks', [TaskController::class, 'store'])->name('project.tasks.store');
+    Route::post('projects/{project}/tasks', [TaskController::class, 'store'])
+        ->name('project.tasks.store');
+
+    Route::post('projects/{task}/assign', [TaskController::class, 'assign'])
+        ->name('project.tasks.assign');
 });
 
 Route::get('/', function () {

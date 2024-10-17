@@ -8,20 +8,28 @@ use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
+    public function store(Project $project, Request $request)
+    {
+        $project->tasks()->create($request->all());
+    }
+
+    public function assign(Task $task, Request $request)
+    {
+        $assignees = [...$request->input('assignees', [])];
+        $task->assignees()->attach($assignees);
+
+        return response()->json([
+            'task' => $task->id,
+            'assignees' => [...$task->assignees]
+        ]);
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
         //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Project $project, Request $request)
-    {
-        $project->tasks()->create($request->all());
     }
 
     /**
