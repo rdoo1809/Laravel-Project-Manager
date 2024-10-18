@@ -15,8 +15,14 @@ class TaskController extends Controller
 
     public function assign(Task $task, Request $request)
     {
+        $taskProject = Project::query()->where('id', $task->project_id)->firstOrFail();
         $assignees = [...$request->input('assignees', [])];
-        $task->assignees()->attach($assignees);
+
+        foreach ($assignees as $assignee) {
+            if ($taskProject->assignees->contains($assignee)) {
+                $task->assignees()->attach($assignee);
+            }
+        }
 
         return response()->json([
             'task' => $task->id,
