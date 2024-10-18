@@ -41,6 +41,19 @@ class ProjectCreationTest extends TestCase
         $this->assertDatabaseHas('projects', $this->validProject);
     }
 
+
+    public function test_regular_employees_appear_on_screen(): void
+    {
+        $this->actingAs($this->managerUser)
+            ->fromRoute('dashboard')
+            ->getJson(route('projects.create'))
+            ->assertSuccessful()
+            ->assertInertia(fn($page) => $page->component('ProjectMaker')
+                ->has('employees', 1)
+                ->where('employees.0.name', $this->regularUser->name));
+    }
+
+
     public function test_a_fresh_project_is_seen_on_dashboard(): void
     {
         $this->actingAs($this->managerUser)
@@ -148,7 +161,7 @@ class ProjectCreationTest extends TestCase
         ];
     }
 
-    public function test_project_with_invalid_memberb_ids_returns_val_error(): void
+    public function test_project_with_invalid_member_ids_returns_val_error(): void
     {
         $this->markTestIncomplete();
         $invalidProjectMembers = [

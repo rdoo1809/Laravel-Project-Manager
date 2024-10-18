@@ -25,6 +25,10 @@ class ProjectController extends Controller
 
     public function create()
     {
+        if (!auth()->user()->can('create', Project::class)) {
+            abort(403, 'This is above your pay grade... work harder ;)');
+        }
+
         $regularEmployees = User::query()->where('is_manager', '=', '0')->get();
         return Inertia::render('ProjectMaker', [
             'employees' => $regularEmployees
@@ -46,16 +50,18 @@ class ProjectController extends Controller
             abort(403, 'This is above your pay grade... work harder ;)');
         }
 
-        $members = $project->assignees;
+        $project->load('assignees');
+
         $employees = User::query()
             ->where('is_manager', 0)
             ->get()
             ->filter(fn($emp) => !$emp->projects->contains($project->id));
 
+        //todo resource?
         return Inertia::render('ProjectEditor', [
             'selectedProject' => $project,
-            'projectMembers' => $members,
-            'allEmployees' => $employees
+            'allEmployees' => $employees,
+            'taskList' => ['the first task']
         ]);
     }
 
@@ -84,11 +90,12 @@ class ProjectController extends Controller
 //        return Inertia::render('dashboard', [
 //            'projects' => $projects
 //        ]);
+
         //return Inertia::location(route('dashboard'));
     }
 
-    public function show(Project $project)
-    {
-        //
-    }
+//    public function show(Project $project)
+//    {
+//        //
+//    }
 }

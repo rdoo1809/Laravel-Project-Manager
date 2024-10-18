@@ -10,10 +10,10 @@ export default {
     components: {Checkbox, Head, AuthenticatedLayout, PrimaryButton},
     props: {
         employees: Array,
-        errors: Object
     },
     data() {
         return {
+            errors: null,
             form: useForm({
                 title: '',
                 description: '',
@@ -21,20 +21,13 @@ export default {
             }),
         };
     },
-    mounted() {
-        this.load();
-    },
     methods: {
-        load() {
-
-        },
         async submitForm() {
             try {
                 await axios.post(route('projects.store'), this.form)
                 window.location.assign('/dashboard');
             } catch (e) {
-                this.errors = e.response.message
-                alert('Something went wrong!');
+                this.errors = e.response.data.errors
             }
         }
     }
@@ -50,15 +43,16 @@ export default {
             <hr>
             <form @submit.prevent="submitForm"
                   class="py-12 flex flex-col space-y-4 items-center">
-                <h4>{{ errors }}</h4>
                 <label>
-                    Project Name:
+                    Project Title:
                     <input v-model="form.title" type="text"/>
+                    <h4 class="text-red-600">{{ errors?.title }}</h4>
                 </label>
-
+                <!--                todo render without []?-->
                 <label>
                     Description:
                     <input v-model="form.description" type="text"/>
+                    <h4 class="text-red-600">{{ errors?.description }}</h4>
                 </label>
 
                 <label>

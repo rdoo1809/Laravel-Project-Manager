@@ -7,6 +7,10 @@ use App\Models\User;
 
 class ProjectPolicy
 {
+    public function create(User $user): bool
+    {
+        return $user->is_manager;
+    }
 
     public function store(User $user): bool
     {
@@ -36,27 +40,20 @@ class ProjectPolicy
         return $user->is_manager;
     }
 
-    /**
-     * Determine whether the user can create models.
-     */
-    public function create(User $user): bool
-    {
-        //
-    }
 
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, Project $project): bool
-    {
-        //
-    }
+//    public function restore(User $user, Project $project): bool
+//    {
+//        //
+//    }
 
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, Project $project): bool
-    {
-        //
-    }
+//    public function forceDelete(User $user, Project $project): bool
+//    {
+//        //
+//    }
 }

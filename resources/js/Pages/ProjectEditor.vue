@@ -14,6 +14,10 @@ export default {
         allEmployees: {
             type: Object,
             required: true
+        },
+        taskList: {
+            type: Object,
+            required: true
         }
     },
     data() {
@@ -24,17 +28,27 @@ export default {
                 members: [],
                 removeMembers: []
             }),
+            task: null,
+            errors: null,
         };
     },
     methods: {
-        submitForm() {
-            this.form.put(route('projects.update', this.selectedProject))
-            console.log(this.form);
+        async submitForm() {
+            try {
+                // await axios.put(route('projects.update'), this.form)
+                //todo make axios request - render errors on screen
+                this.form.put(route('projects.update', this.selectedProject))
+            } catch (e) {
+                alert('whoops!');
+                console.log(e);
+            }
+        },
+        submitTask() {
+            console.log(this.task)
         }
     },
 }
 </script>
-
 
 <template>
     <Head title="Project Editor"/>
@@ -58,7 +72,6 @@ export default {
                                     Description:
                                     <textarea v-model="form.description" type="text"/>
                                 </label>
-                                <!--                                <PrimaryButton class="mt-4">Update Project</PrimaryButton>-->
                             </form>
 
                         </div>
@@ -69,8 +82,7 @@ export default {
                     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                             <h4>Project Members</h4>
-                            <form class="py-12 flex flex-col space-y-4 items-center"
-                                  @submit.prevent="submitForm">
+                            <form class="py-12 flex flex-col space-y-4 items-center">
                                 <label>
                                     <strong>Project Manager:</strong>
                                     {{ selectedProject.assignees[0].name }}
@@ -104,6 +116,29 @@ export default {
                         </div>
                     </div>
                     <PrimaryButton class="mt-4" @click="submitForm">Update Project</PrimaryButton>
+                </div>
+            </div>
+            <hr>
+            <div class="grid gap-6 lg:grid-cols-2 lg:gap-8">
+                <div class="py-12">
+                    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                            <h4>Task Management</h4>
+                            <form class="py-12 flex flex-col space-y-4 items-center"
+                                  @submit.prevent="submitTask">
+                                <label>
+                                    Task Description:
+                                    <input v-model="task" type="text"/>
+                                </label>
+                                <PrimaryButton class="mt-4">Add Task</PrimaryButton>
+                            </form>
+
+                            <strong><p>Tasks for Project</p></strong>
+                            <ul>
+                                <li v-for="task in this.taskList">{{ task }}</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -1,10 +1,45 @@
-<script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import {Head} from '@inertiajs/vue3';
-import axios from "axios";
+<script>
+import {Head} from "@inertiajs/vue3";
+import PrimaryButton from "@/Components/PrimaryButton.vue";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 
-defineProps(['projects', 'project'])
+export default {
+    name: "ProjectEditor",
+    components: {Head, AuthenticatedLayout, PrimaryButton},
+    props: {
+        projects: {
+            type: Object,
+            required: true
+        },
+    },
+    data() {
+        return {
+            projectList: this.projects
+        };
+    },
+    methods: {
+        async deleteProject(project) {
+            try {
+                await axios.delete(route('projects.destroy', project.id))
+                // await this.fetchProjects();
+                //window.location.assign('/dashboard');
+            } catch (e) {
+                alert(e);
+            }
+        },
+        // async fetchProjects() {
+        //     try {
+        //         const updatedProjects = await axios.get(route('dashboard'));
+        //         console.log('made it')
+        //         this.projectList = updatedProjects.data
+        //     } catch (error) {
+        //         alert(error);
+        //     }
+        // }
+    }
+}
 </script>
+
 
 <template>
     <Head title="Dashboard"/>
@@ -36,7 +71,7 @@ defineProps(['projects', 'project'])
                                 <td class="font-bold">Description</td>
                                 <td class="font-bold">Actions</td>
                             </tr>
-                            <tbody v-for="p in projects">
+                            <tbody v-for="p in projectList">
                             <tr>
                                 <td>
                                     {{ p.title }}
@@ -46,8 +81,8 @@ defineProps(['projects', 'project'])
                                 </td>
                                 <td><a :href="route('projects.edit', p.id)"
                                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">EDIT</a>
-                                    | <a v-on:click="axios.delete(route('projects.destroy', p.id))"
-                                         class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">TRASH</a>
+                                    <a class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                                       @click="deleteProject(p)">TRASH</a>
                                 </td>
                             </tr>
                             </tbody>
@@ -64,6 +99,5 @@ defineProps(['projects', 'project'])
                 </div>
             </div>
         </div>
-
     </AuthenticatedLayout>
 </template>
