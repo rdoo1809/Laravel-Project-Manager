@@ -21,21 +21,11 @@ export default {
         async deleteProject(project) {
             try {
                 await axios.delete(route('projects.destroy', project.id))
-                // await this.fetchProjects();
-                //window.location.assign('/dashboard');
+                window.location.reload();
             } catch (e) {
                 alert(e);
             }
         },
-        // async fetchProjects() {
-        //     try {
-        //         const updatedProjects = await axios.get(route('dashboard'));
-        //         console.log('made it')
-        //         this.projectList = updatedProjects.data
-        //     } catch (error) {
-        //         alert(error);
-        //     }
-        // }
     }
 }
 </script>

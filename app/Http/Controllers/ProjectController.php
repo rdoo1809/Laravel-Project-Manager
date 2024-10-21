@@ -82,17 +82,7 @@ class ProjectController extends Controller
         if (!auth()->user()->can('delete', $project)) {
             abort(403, 'This is above your pay grade... work harder ;)');
         }
-
         $project->delete();
-
-        // Todo
-        //How to refresh??
-//        $projects = Project::all();
-//        return Inertia::render('dashboard', [
-//            'projects' => $projects
-//        ]);
-
-        //return Inertia::location(route('dashboard'));
     }
 
 //    public function show(Project $project)
