@@ -16,10 +16,10 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
         ->name('dashboard');
 
     Route::post('projects/{project}/tasks', [TaskController::class, 'store'])
-        ->name('project.tasks.store');
+        ->name('projects.tasks.store');
 
     Route::post('projects/{task}/assign', [TaskController::class, 'assign'])
-        ->name('project.tasks.assign');
+        ->name('projects.tasks.assign');
 });
 
 Route::get('/', function () {

@@ -2,6 +2,7 @@
 import {Head, useForm} from "@inertiajs/vue3";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import axios from "axios";
 
 export default {
     name: "ProjectEditor",
@@ -29,7 +30,7 @@ export default {
                 removeMembers: []
             }),
             task: null,
-            errors: null,
+            taskErrors: null,
         };
     },
     methods: {
@@ -43,8 +44,17 @@ export default {
                 console.log(e);
             }
         },
-        submitTask() {
-            console.log(this.task)
+        async submitTask() {
+            try {
+                console.log(this.task)
+                await axios.post(route('projects.tasks.store', this.selectedProject), {
+                    'task': this.task
+                })
+                window.location.reload();
+            } catch (e) {
+                console.log(e)
+                this.taskErrors = e.response.data.message
+            }
         }
     },
 }
@@ -130,12 +140,15 @@ export default {
                                     Task Description:
                                     <input v-model="task" type="text"/>
                                 </label>
+                                <p>{{ this.taskErrors }}</p>
                                 <PrimaryButton class="mt-4">Add Task</PrimaryButton>
                             </form>
 
                             <strong><p>Tasks for Project</p></strong>
                             <ul>
-                                <li v-for="task in this.taskList">{{ task }}</li>
+                                <li v-for="task in this.taskList">
+                                    <p>{{ task.id }} - {{ task.task }}</p>
+                                </li>
                             </ul>
                         </div>
                     </div>

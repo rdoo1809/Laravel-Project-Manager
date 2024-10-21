@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Project;
+use App\Models\Task;
 use App\Models\User;
 use Inertia\Inertia;
 
@@ -61,7 +62,7 @@ class ProjectController extends Controller
         return Inertia::render('ProjectEditor', [
             'selectedProject' => $project,
             'allEmployees' => $employees,
-            'taskList' => ['the first task']
+            'taskList' => Task::query()->get()
         ]);
     }
 

@@ -10,7 +10,15 @@ class TaskController extends Controller
 {
     public function store(Project $project, Request $request)
     {
-        $project->tasks()->create($request->all());
+        $validated = $request->validate([
+            'task' => 'required|string'
+        ]);
+
+        $project->tasks()->create($validated);
+
+        return response()->json([
+            'tasks' => Task::query()->get()
+        ]);
     }
 
     public function assign(Task $task, Request $request)
