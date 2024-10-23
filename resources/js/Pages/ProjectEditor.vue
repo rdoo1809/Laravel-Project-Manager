@@ -64,7 +64,7 @@ export default {
     <Head title="Project Editor"/>
     <AuthenticatedLayout>
         <div class="p-24">
-            <h1>Edit Your Project - #{{ selectedProject.id }}</h1>
+            <h1>Project Details - #{{ selectedProject.id }}</h1>
             <hr>
             <div class="grid gap-6 lg:grid-cols-2 lg:gap-8">
                 <div class="py-12">
@@ -83,7 +83,6 @@ export default {
                                     <textarea v-model="form.description" type="text"/>
                                 </label>
                             </form>
-
                         </div>
                     </div>
                 </div>

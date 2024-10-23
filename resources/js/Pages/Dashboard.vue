@@ -14,7 +14,8 @@ export default {
     },
     data() {
         return {
-            projectList: this.projects
+            projectList: this.projects,
+            selectedProject: null
         };
     },
     methods: {
@@ -26,17 +27,22 @@ export default {
                 alert(e);
             }
         },
+        selectProject(project) {
+            this.selectedProject = project;
+
+            axios.get(route(''))
+
+            //api call to fetch tasks for project
+        }
     }
 }
 </script>
 
-
 <template>
     <Head title="Dashboard"/>
-
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Dashboard</h2>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Project Management Dashboard</h2>
         </template>
 
         <div class="py-12">
@@ -61,8 +67,9 @@ export default {
                                 <td class="font-bold">Description</td>
                                 <td class="font-bold">Actions</td>
                             </tr>
-                            <tbody v-for="p in projectList">
-                            <tr>
+                            <tbody v-for="p in projectList" :key="p.id">
+                            <tr :class="{'bg-blue-200': selectedProject?.id === p.id, 'cursor-pointer': true}"
+                                @click="selectProject(p)">
                                 <td>
                                     {{ p.title }}
                                 </td>

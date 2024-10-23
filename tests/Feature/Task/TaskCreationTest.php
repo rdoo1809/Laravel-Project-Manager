@@ -32,7 +32,7 @@ class TaskCreationTest extends TestCase
         $this->assertDatabaseMissing('tasks', $rawTask);
 
         $this->actingAs($this->manager)
-            ->postJson(route('project.tasks.store', $this->project), $rawTask)
+            ->postJson(route('projects.tasks.store', $this->project), $rawTask)
             ->assertSuccessful();
 
         $this->assertDatabaseHas('tasks', $rawTask);
@@ -49,7 +49,7 @@ class TaskCreationTest extends TestCase
 
         $this->actingAs($this->manager)
             ->fromRoute('projects.edit', $this->project)
-            ->postJson(route('project.tasks.assign', $this->task), $pivotPayload)
+            ->postJson(route('projects.tasks.assign', $this->task), $pivotPayload)
             ->assertSuccessful()
             ->assertJson(
                 fn(AssertableJson $json) => $json
@@ -71,7 +71,7 @@ class TaskCreationTest extends TestCase
 
         $this->actingAs($this->manager)
             ->fromRoute('projects.edit', $this->project)
-            ->postJson(route('project.tasks.assign', $this->task), $pivotPayload)
+            ->postJson(route('projects.tasks.assign', $this->task), $pivotPayload)
             ->assertSuccessful()
             ->assertJson(
                 fn(AssertableJson $json) => $json
@@ -94,7 +94,7 @@ class TaskCreationTest extends TestCase
 
         $this->actingAs($this->manager)
             ->fromRoute('projects.edit', $this->project)
-            ->postJson(route('project.tasks.assign', $this->task), $pivotPayload)
+            ->postJson(route('projects.tasks.assign', $this->task), $pivotPayload)
             ->assertSuccessful()
             ->assertJson(
                 fn(AssertableJson $json) => $json

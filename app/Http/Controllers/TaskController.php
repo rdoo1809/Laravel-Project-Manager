@@ -8,6 +8,15 @@ use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
+    public function show(Task $task, Project $project)
+    {
+        $projectTasks = Task::query()->where('project_id', $project->id)->get()->toArray();
+
+        return response()->json([
+            'project_tasks' => $projectTasks
+        ]);
+    }
+
     public function store(Project $project, Request $request)
     {
         $validated = $request->validate([
@@ -38,41 +47,22 @@ class TaskController extends Controller
         ]);
     }
 
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index()
     {
         //
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Task $task)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Task $task)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Task $task)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Task $task)
     {
         //

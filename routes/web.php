@@ -9,12 +9,17 @@ use Inertia\Inertia;
 
 
 Route::group(['middleware' => ['auth', 'verified']], function () {
-    Route::resource('projects', ProjectController::class)
-        ->only(['create', 'store', 'edit', 'update', 'destroy']);
-
     Route::get('/dashboard', [ProjectController::class, 'index'])
         ->name('dashboard');
 
+    Route::resource('projects', ProjectController::class)
+        ->only(['create', 'store', 'edit', 'update', 'destroy']);
+
+
+    Route::get('projects/{project}/tasks', [TaskController::class, 'show'])
+        ->name('projects.tasks.show');
+
+    //task related routes
     Route::post('projects/{project}/tasks', [TaskController::class, 'store'])
         ->name('projects.tasks.store');
 
@@ -38,3 +43,6 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__ . '/auth.php';
+
+// todo ideas
+//secret identity - store real names as encryptions - use identity - batman is superadmin can click button to show unencrypted info
