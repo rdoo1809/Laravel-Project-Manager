@@ -47,6 +47,13 @@ class TaskController extends Controller
         ]);
     }
 
+    public function members(Task $task)
+    {
+        return response()->json([
+            'task' => $task->id,
+            'assignees' => [...$task->assignees]
+        ]);
+    }
 
     public function index()
     {

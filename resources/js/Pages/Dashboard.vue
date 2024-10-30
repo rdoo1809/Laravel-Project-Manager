@@ -15,7 +15,10 @@ export default {
     data() {
         return {
             projectList: this.projects,
-            selectedProject: null
+            selectedProject: null,
+            projectTasks: null,
+            selectedTask: null,
+            taskAssignees: null
         };
     },
     methods: {
@@ -27,12 +30,24 @@ export default {
                 alert(e);
             }
         },
-        selectProject(project) {
+        async selectProject(project) {
             this.selectedProject = project;
-
-            axios.get(route(''))
-
-            //api call to fetch tasks for project
+            try {
+                let taskResponse = await axios.get(route('projects.tasks.show', this.selectedProject))
+                this.projectTasks = taskResponse.data.project_tasks;
+            } catch (e) {
+                alert(e);
+            }
+        },
+        async selectTask(task) {
+            this.selectedTask = task;
+            try {
+                let taskResponse = await axios.get(route('projects.tasks.assignees', this.selectedTask))
+                // this.taskAssignees = taskResponse
+                console.log(taskResponse);
+            } catch (e) {
+                alert(e);
+            }
         }
     }
 }
@@ -54,13 +69,10 @@ export default {
         </div>
 
         <div class="grid gap-6 lg:grid-cols-2 lg:gap-8">
-
             <div class="py-12">
                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div class="p-6 text-gray-900">My Projects</div>
-
-
                         <table class="border-2 w-full">
                             <tr>
                                 <td class="font-bold">Project</td>
@@ -87,11 +99,50 @@ export default {
                     </div>
                 </div>
             </div>
+        </div>
 
+        <div class="grid gap-6 lg:grid-cols-2 lg:gap-8">
             <div class="py-12">
                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div class="p-6 text-gray-900">Tasks For Project</div>
+                        <div class="p-6 text-gray-900">Active Tasks For Project - {{ selectedProject?.title }}</div>
+                        <table class="border-2 w-full">
+                            <tr>
+                                <td class="font-bold">Task</td>
+                                <td class="font-bold">Project</td>
+                                <td class="font-bold">Actions</td>
+                            </tr>
+
+                            <tbody v-for="task in this.projectTasks" :key="task.id">
+                            <tr :class="{'bg-blue-200': selectedTask?.id === task.id, 'cursor-pointer': true}"
+                                @click="selectTask(task)">
+                                <td>{{ task.task }}</td>
+                                <td>{{ task.project_id }}</td>
+                                <td>View History</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="py-12">
+                <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                        <div class="p-6 text-gray-900">Task {{ }}</div>
+                        <table class="border-2 w-full">
+                            <tr>
+                                <td class="font-bold">Employee Name</td>
+                                <td class="font-bold">Email</td>
+                                <td class="font-bold">Actions</td>
+                            </tr>
+                            <tbody v-for="member in this.taskAssignees" :key="member.id">
+                            <tr>
+                                <td>{{ member.name }}</td>
+                                <td>{{ member.email }}</td>
+                                <td>View Profile</td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

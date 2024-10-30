@@ -19,6 +19,9 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::get('projects/{project}/tasks', [TaskController::class, 'show'])
         ->name('projects.tasks.show');
 
+    Route::get('projects/{tasks}/assignees', [TaskController::class, 'members'])
+        ->name('projects.tasks.assignees');
+
     //task related routes
     Route::post('projects/{project}/tasks', [TaskController::class, 'store'])
         ->name('projects.tasks.store');

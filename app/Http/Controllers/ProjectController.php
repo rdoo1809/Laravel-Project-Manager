@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Project;
-use App\Models\Task;
 use App\Models\User;
 use Inertia\Inertia;
 
@@ -51,18 +50,20 @@ class ProjectController extends Controller
             abort(403, 'This is above your pay grade... work harder ;)');
         }
 
-        $project->load('assignees');
-
-        $employees = User::query()
+        $nonProjectEmployees = User::query()
             ->where('is_manager', 0)
             ->get()
             ->filter(fn($emp) => !$emp->projects->contains($project->id));
 
-        //todo resource?
+//        $nonTaskMembers = $project->assignees;
+//        $nonTaskMembers->filter(fn($member) => $member->tasks);
+
+        //todo resource for Project containing all relevant info?
+        $project->load(['assignees', 'tasks']);
         return Inertia::render('ProjectEditor', [
             'selectedProject' => $project,
-            'allEmployees' => $employees,
-            'taskList' => Task::query()->get()
+            'nonProjectEmployees' => $nonProjectEmployees,
+            'nonTaskMembers' => 'employees where there is no task_user record?'
         ]);
     }
 

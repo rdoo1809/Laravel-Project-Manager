@@ -12,11 +12,11 @@ export default {
             type: Object,
             required: true
         },
-        allEmployees: {
+        nonProjectEmployees: {
             type: Object,
             required: true
         },
-        taskList: {
+        nonTaskMembers: {
             type: Object,
             required: true
         }
@@ -31,6 +31,8 @@ export default {
             }),
             task: null,
             taskErrors: null,
+            modalTask: null,
+            modalHidden: true
         };
     },
     methods: {
@@ -55,6 +57,10 @@ export default {
                 console.log(e)
                 this.taskErrors = e.response.data.message
             }
+        },
+        showTaskModal(task) {
+            this.modalTask = task;
+            this.modalHidden = false;
         }
     },
 }
@@ -113,7 +119,7 @@ export default {
                                 <label>
                                     <strong>Add Members to This Project</strong>
                                     <ul>
-                                        <li v-for="available in this.allEmployees">
+                                        <li v-for="available in this.nonProjectEmployees">
                                             {{ available.name }}
                                             <input v-model="form.members"
                                                    :value="available.id"
@@ -145,10 +151,34 @@ export default {
 
                             <strong><p>Tasks for Project</p></strong>
                             <ul>
-                                <li v-for="task in this.taskList">
-                                    <p>{{ task.id }} - {{ task.task }}</p>
+                                <li v-for="task in this.selectedProject.tasks">
+                                    {{ task.id }} - {{ task.task }} -
+                                    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                                            @click="showTaskModal(task)">
+                                        Assign Team Members
+                                    </button>
+                                    <hr>
                                 </li>
                             </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid gap-6 lg:gap-8">
+                    <div class="py-12">
+                        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                                <div :hidden="this.modalHidden">
+                                    <p>Assign Members to Task - #{{ this.modalTask?.id }} -
+                                        {{ this.modalTask?.task }}</p>
+                                    <ul>
+                                        <li v-for="employee in this.selectedProject.assignees.filter(e => e.is_manager === 0)">
+                                            {{ employee.name }}
+                                            <input :value="employee.id"
+                                                   class="mx-2" type="checkbox"/>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
