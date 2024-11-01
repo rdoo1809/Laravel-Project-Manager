@@ -16,10 +16,6 @@ export default {
             type: Object,
             required: true
         },
-        nonTaskMembers: {
-            type: Object,
-            required: true
-        }
     },
     data() {
         return {
@@ -29,14 +25,17 @@ export default {
                 members: [],
                 removeMembers: []
             }),
-            task: null,
+            taskToAdd: null,
             taskErrors: null,
             modalTask: null,
-            modalHidden: true
+            modalTaskNonMembers: null,
+            addTaskMembers: [],
+            modalHidden: true,
+
         };
     },
     methods: {
-        async submitForm() {
+        async patchProject() {
             try {
                 // await axios.put(route('projects.update'), this.form)
                 //todo make axios request - render errors on screen
@@ -48,9 +47,9 @@ export default {
         },
         async submitTask() {
             try {
-                console.log(this.task)
+                console.log(this.taskToAdd)
                 await axios.post(route('projects.tasks.store', this.selectedProject), {
-                    'task': this.task
+                    'task': this.taskToAdd
                 })
                 window.location.reload();
             } catch (e) {
@@ -58,8 +57,25 @@ export default {
                 this.taskErrors = e.response.data.message
             }
         },
-        showTaskModal(task) {
-            this.modalTask = task;
+        async assignTaskMembers() {
+            try {
+                console.log(this.addTaskMembers.slice());
+                await axios.post(route('projects.tasks.assign', this.modalTask.id), {
+                    'addTaskMembers': this.addTaskMembers.slice()
+                })
+            } catch (e) {
+                console.log(e);
+            }
+            this.addTaskMembers = [];
+        },
+        async showTaskModal(task) {
+            try {
+                let taskResponse = await axios.get(route('projects.tasks.assignees', [this.selectedProject, task]))
+                this.modalTask = taskResponse.data.selectedTask;
+                this.modalTaskNonMembers = taskResponse.data.nonAssignees
+            } catch (e) {
+                alert(e);
+            }
             this.modalHidden = false;
         }
     },
@@ -78,7 +94,7 @@ export default {
                         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                             <h4>Project Details</h4>
                             <form class="py-12 flex flex-col space-y-4 items-center"
-                                  @submit.prevent="submitForm">
+                                  @submit.prevent="patchProject">
                                 <label>
                                     Project Name:
                                     <input v-model="form.title" type="text"/>
@@ -130,9 +146,10 @@ export default {
                             </form>
                         </div>
                     </div>
-                    <PrimaryButton class="mt-4" @click="submitForm">Update Project</PrimaryButton>
+                    <PrimaryButton class="mt-4" @click="patchProject">Update Project</PrimaryButton>
                 </div>
             </div>
+
             <hr>
             <div class="grid gap-6 lg:grid-cols-2 lg:gap-8">
                 <div class="py-12">
@@ -143,7 +160,7 @@ export default {
                                   @submit.prevent="submitTask">
                                 <label>
                                     Task Description:
-                                    <input v-model="task" type="text"/>
+                                    <input v-model="taskToAdd" type="text"/>
                                 </label>
                                 <p>{{ this.taskErrors }}</p>
                                 <PrimaryButton class="mt-4">Add Task</PrimaryButton>
@@ -167,17 +184,24 @@ export default {
                     <div class="py-12">
                         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+
+
                                 <div :hidden="this.modalHidden">
                                     <p>Assign Members to Task - #{{ this.modalTask?.id }} -
                                         {{ this.modalTask?.task }}</p>
                                     <ul>
-                                        <li v-for="employee in this.selectedProject.assignees.filter(e => e.is_manager === 0)">
+                                        <li v-for="employee in this.modalTaskNonMembers">
                                             {{ employee.name }}
-                                            <input :value="employee.id"
+                                            <input v-model="addTaskMembers" :value="employee.id"
                                                    class="mx-2" type="checkbox"/>
                                         </li>
                                     </ul>
+                                    <PrimaryButton class="mx-40" @click="assignTaskMembers()">Assign Task
+                                        To Selected Members
+                                    </PrimaryButton>
                                 </div>
+
+
                             </div>
                         </div>
                     </div>

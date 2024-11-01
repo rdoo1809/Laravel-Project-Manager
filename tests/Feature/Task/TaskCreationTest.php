@@ -44,19 +44,21 @@ class TaskCreationTest extends TestCase
         $this->project->assignees()->attach($regularUserIds);
 
         $pivotPayload = [
-            'assignees' => [$regularUserIds[0]]
+            'addTaskMembers' => [$regularUserIds[0]]
         ];
 
-        $this->actingAs($this->manager)
+        $response = $this->actingAs($this->manager)
             ->fromRoute('projects.edit', $this->project)
             ->postJson(route('projects.tasks.assign', $this->task), $pivotPayload)
-            ->assertSuccessful()
-            ->assertJson(
-                fn(AssertableJson $json) => $json
-                    ->has('task')
-                    ->has('assignees', 1)
-                    ->has('assignees.0', fn($json) => $json->where('id', $regularUserIds[0])->etc())
-            );
+            ->assertSuccessful();
+
+        $response->assertJson(
+            fn(AssertableJson $json) => $json
+                ->has('task', fn($json) => $json
+                    ->has('assignees', fn($json) => $json
+                        ->has('0', fn($json) => $json
+                            ->where('id', $regularUserIds[0])->etc())->etc())->etc())
+        );
         $this->assertDatabaseCount('task_user', 1);
     }
 
@@ -66,7 +68,7 @@ class TaskCreationTest extends TestCase
         $this->project->assignees()->attach($regularUserIds);
 
         $pivotPayload = [
-            'assignees' => $regularUserIds
+            'addTaskMembers' => $regularUserIds
         ];
 
         $this->actingAs($this->manager)
@@ -75,9 +77,10 @@ class TaskCreationTest extends TestCase
             ->assertSuccessful()
             ->assertJson(
                 fn(AssertableJson $json) => $json
-                    ->has('task')
-                    ->has('assignees', 3)
-                    ->has('assignees.2', fn($json) => $json->where('id', $regularUserIds[2])->etc())
+                    ->has('task', fn($json) => $json
+                        ->has('assignees', fn($json) => $json
+                            ->has('0', fn($json) => $json
+                                ->where('id', $regularUserIds[0])->etc())->etc())->etc())
             );
         $this->assertDatabaseCount('task_user', 3);
     }
@@ -89,7 +92,7 @@ class TaskCreationTest extends TestCase
         $otherEmployee = User::factory()->regular()->create();
 
         $pivotPayload = [
-            'assignees' => [$projectEmployee->id, $otherEmployee->id]
+            'addTaskMembers' => [$projectEmployee->id, $otherEmployee->id]
         ];
 
         $this->actingAs($this->manager)
@@ -98,22 +101,33 @@ class TaskCreationTest extends TestCase
             ->assertSuccessful()
             ->assertJson(
                 fn(AssertableJson $json) => $json
-                    ->has('task')
-                    ->has('assignees', 1)
-                    ->has('assignees.0', fn($json) => $json
-                        ->where('id', $projectEmployee->id)->etc())
+                    ->has('task', fn($json) => $json
+                        ->has('assignees', fn($json) => $json
+                            ->has('0', fn($json) => $json
+                                ->where('id', $projectEmployee->id)->etc()))->etc())
             );
         $this->assertDatabaseCount('task_user', 1);
     }
 
-    public function test_a_project_is_loaded_with_tasks(): void
+    public function test_existing_task_assignees_cannot_be_double_assigned(): void
     {
-        //arrange
         $this->markTestIncomplete();
+        //arrange
+        //regular employee already attahced to task
+        $taskMember = User::factory()->regular()->create();
+        $this->task->assignees()->attach($taskMember->id);
+
+        $taskAssigneeCount = $this->task->assignees->count();
 
         //act
-
+        //try to assign same person to task
+//        $this->actingAs($this->managerUser)
+//            ->fromRoute('')
+//            ->postJson(route(''))
 
         //assert
+        //assert unsuccessful
+        //same assignee count as before
+        $this->assertDatabaseCount('task_user', '1');
     }
 }

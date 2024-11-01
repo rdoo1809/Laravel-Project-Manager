@@ -15,12 +15,8 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
     Route::resource('projects', ProjectController::class)
         ->only(['create', 'store', 'edit', 'update', 'destroy']);
 
-
     Route::get('projects/{project}/tasks', [TaskController::class, 'show'])
         ->name('projects.tasks.show');
-
-    Route::get('projects/{tasks}/assignees', [TaskController::class, 'members'])
-        ->name('projects.tasks.assignees');
 
     //task related routes
     Route::post('projects/{project}/tasks', [TaskController::class, 'store'])
@@ -28,6 +24,9 @@ Route::group(['middleware' => ['auth', 'verified']], function () {
 
     Route::post('projects/{task}/assign', [TaskController::class, 'assign'])
         ->name('projects.tasks.assign');
+
+    Route::get('projects/{project}/tasks/{task}/assignees', [TaskController::class, 'members'])
+        ->name('projects.tasks.assignees');
 });
 
 Route::get('/', function () {

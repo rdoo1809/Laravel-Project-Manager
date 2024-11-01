@@ -51,9 +51,32 @@ class TaskRetrievalTest extends TestCase
                 ->has('project_tasks.1', fn($json) => $json->where('id', $tasks[1]['id'])->etc()));
     }
 
-    protected function setUp(): void
+    public function test_tasks_are_retrieved_with_assignees_and_others(): void
     {
-        parent::setUp();
+        $managerUser = User::factory()->manager()->create();
+        $project = Project::factory()->create();
+        $task = Task::factory()->create([
+            'project_id' => $project->id
+        ]);
 
+        $taskMembers = User::factory()->count(2)->create()->pluck('id');
+        $project->assignees()->attach($taskMembers);
+        $taskMembers->each(function ($member) use ($task) {
+            $task->assignees()->attach($member);
+        });
+
+        $response = $this->actingAs($managerUser)
+            ->fromRoute('projects.edit', $project)
+            ->getJson(route('projects.tasks.assignees', [$project, $task]))
+            ->assertSuccessful();
+
+        $response->assertJson(fn(AssertableJson $json) => $json
+            ->has('selectedTask', fn($json) => $json
+                ->has('assignees', fn($json) => $json
+                    ->has(2)
+                    ->has('0', fn($json) => $json->where('id', $taskMembers->first())
+                        ->etc())->etc())->etc())
+            ->has('nonAssignees')
+        );
     }
 }
