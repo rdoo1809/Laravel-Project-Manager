@@ -16,7 +16,6 @@ export default {
         return {
             projectList: this.projects,
             selectedProject: null,
-            projectTasks: null,
             selectedTask: null,
             taskAssignees: null
         };
@@ -32,12 +31,6 @@ export default {
         },
         async selectProject(project) {
             this.selectedProject = project;
-            try {
-                let taskResponse = await axios.get(route('projects.tasks.show', this.selectedProject))
-                this.projectTasks = taskResponse.data.project_tasks;
-            } catch (e) {
-                alert(e);
-            }
         },
         async selectTask(task) {
             this.selectedTask = task;
@@ -56,6 +49,7 @@ export default {
 <template>
     <Head title="Dashboard"/>
     <AuthenticatedLayout>
+
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">Project Manager 5001</h2>
         </template>
@@ -101,6 +95,33 @@ export default {
                     </div>
                 </div>
             </div>
+            <div class="py-12">
+                <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                        <div class="p-6 text-gray-900">{{ this.selectedProject?.title }} Members</div>
+                        <table class="border-2 w-full">
+                            <tr>
+                                <td class="font-bold">Member Name</td>
+                                <td class="font-bold">Contact</td>
+                                <td class="font-bold">Role</td>
+                            </tr>
+                            <tbody v-for="a in this.selectedProject?.assignees" :key="a.id">
+                            <tr>
+                                <td>
+                                    {{ a.name }}
+                                </td>
+                                <td>
+                                    {{ a.email }}
+                                </td>
+                                <td>
+                                    {{ a.is_manager ? 'Manager' : 'Regular' }}
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="grid gap-6 lg:grid-cols-2 lg:gap-8">
@@ -115,7 +136,7 @@ export default {
                                 <td class="font-bold">Actions</td>
                             </tr>
 
-                            <tbody v-for="task in this.projectTasks" :key="task.id">
+                            <tbody v-for="task in this.selectedProject?.tasks" :key="task.id">
                             <tr :class="{'bg-blue-200': selectedTask?.id === task.id, 'cursor-pointer': true}"
                                 @click="selectTask(task)">
                                 <td>{{ task.task }}</td>

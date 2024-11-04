@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
+use App\Http\Resources\ProjectResource;
 use App\Models\Project;
 use App\Models\User;
 use Inertia\Inertia;
@@ -18,8 +19,19 @@ class ProjectController extends Controller
             $projects = auth()->user()->projects;
         }
 
+        $projectRes = [];
+
+        foreach ($projects as $project) {
+            $newnew = new ProjectResource($project);
+//            dd($newnew);
+            array_push($projectRes, $newnew);
+            return $newnew;
+        }
+
+
+        $projects->load(['tasks', 'assignees']);
         return Inertia::render('Dashboard', [
-            'projects' => $projects
+            'projects' => $projectRes
         ]);
     }
 
