@@ -25,13 +25,13 @@ class ProjectController extends Controller
             $newnew = new ProjectResource($project);
 //            dd($newnew);
             array_push($projectRes, $newnew);
-            return $newnew;
+//            return $newnew;
         }
 
 
         $projects->load(['tasks', 'assignees']);
         return Inertia::render('Dashboard', [
-            'projects' => $projectRes
+            'projects' => $projects
         ]);
     }
 

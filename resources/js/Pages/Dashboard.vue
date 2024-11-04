@@ -105,7 +105,8 @@ export default {
                                 <td class="font-bold">Contact</td>
                                 <td class="font-bold">Role</td>
                             </tr>
-                            <tbody v-for="a in this.selectedProject?.assignees" :key="a.id">
+                            <tbody v-for="a in this.selectedProject?.assignees.filter((b) => !b.is_manager)"
+                                   :key="a.id">
                             <tr>
                                 <td>
                                     {{ a.name }}
