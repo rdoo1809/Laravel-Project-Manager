@@ -28,6 +28,7 @@ export default {
                 await axios.post(route('projects.store'), this.form)
                 // window.location.assign('/dashboard');
             } catch (e) {
+                console.log(e.response)
                 this.errors = e.response.data.errors
             }
         }

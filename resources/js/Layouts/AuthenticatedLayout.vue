@@ -1,5 +1,5 @@
 <script setup>
-import {ref} from 'vue';
+import {onMounted, ref} from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
@@ -8,6 +8,17 @@ import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import {Link} from '@inertiajs/vue3';
 
 const showingNavigationDropdown = ref(false);
+const isDarkMode = ref(false);
+
+function toggleDarkMode() {
+    isDarkMode.value = !isDarkMode.value;
+    localStorage.setItem('theme', isDarkMode.value ? 'dark' : 'light');
+}
+
+onMounted(() => {
+    const savedTheme = localStorage.getItem('theme');
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+});
 </script>
 
 <template>
@@ -145,6 +156,10 @@ const showingNavigationDropdown = ref(false);
             <header v-if="$slots.header" class="bg-white shadow dark:bg-blue-900">
                 <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                     <slot name="header"/>
+                    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                            @click="toggleDarkMode">
+                        Toggle Dark Mode
+                    </button>
                 </div>
             </header>
 

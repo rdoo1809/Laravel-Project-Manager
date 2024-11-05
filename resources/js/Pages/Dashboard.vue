@@ -27,19 +27,6 @@ export default {
             } catch (e) {
                 alert(e);
             }
-        },
-        selectProject(project) {
-            this.selectedProject = project;
-        },
-        selectTask(task) {
-            this.selectedTask = task;
-            // try {
-            //     let taskResponse = await axios.get(route('projects.tasks.assignees', this.selectedTask))
-            //     // this.taskAssignees = taskResponse
-            //     console.log(taskResponse);
-            // } catch (e) {
-            //     alert(e);
-            // }
         }
     }
 }
@@ -77,8 +64,9 @@ export default {
                                 <td class="font-bold">Actions</td>
                             </tr>
                             <tbody v-for="p in projects.data" :key="p.project_id">
-                            <tr :class="{'bg-blue-900': selectedProject?.project_id === p.project_id, 'cursor-pointer': true}"
-                                @click="selectProject(p)">
+                            <tr :class="{'bg-blue-300': selectedProject?.project_id === p.project_id, 'cursor-pointer': true}"
+                                @click="this.selectedTask = null;
+            this.selectedProject = p;">
                                 <td>
                                     {{ p.project_name }}
                                 </td>
@@ -99,7 +87,9 @@ export default {
             <div class="py-12">
                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg dark:bg-gray-800">
-                        <div class="p-6 text-gray-900 dark:text-white">{{ this.selectedProject?.title }} Members</div>
+                        <div class="p-6 text-gray-900 dark:text-white">{{ this.selectedProject?.project_name }}
+                            Members
+                        </div>
                         <table class="border-2 w-full">
                             <tr>
                                 <td class="font-bold">Member Name</td>
@@ -139,8 +129,8 @@ export default {
                                 <td class="font-bold">Actions</td>
                             </tr>
                             <tbody v-for="task in this.selectedProject?.project_tasks" :key="task.task_id">
-                            <tr :class="{'bg-blue-900': selectedTask?.task_id === task.task_id, 'cursor-pointer': true}"
-                                @click="selectTask(task)">
+                            <tr :class="{'bg-blue-300': selectedTask?.task_id === task.task_id, 'cursor-pointer': true}"
+                                @click="this.selectedTask = task;">
                                 <td>{{ task.task }}</td>
                                 <td>View History</td>
                             </tr>

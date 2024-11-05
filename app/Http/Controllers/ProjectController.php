@@ -63,9 +63,6 @@ class ProjectController extends Controller
             ->get()
             ->filter(fn($emp) => !$emp->projects->contains($project->id));
 
-//        $nonTaskMembers = $project->assignees;
-//        $nonTaskMembers->filter(fn($member) => $member->tasks);
-
         //todo resource for Project containing all relevant info?
         $project->load(['assignees', 'tasks']);
         return Inertia::render('ProjectEditor', [

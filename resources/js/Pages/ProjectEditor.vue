@@ -59,9 +59,9 @@ export default {
         },
         async assignTaskMembers() {
             try {
-                console.log(this.addTaskMembers.slice());
+                console.log(this.addTaskMembers);
                 await axios.post(route('projects.tasks.assign', this.modalTask.id), {
-                    'addTaskMembers': this.addTaskMembers.slice()
+                    'addTaskMembers': this.addTaskMembers
                 })
             } catch (e) {
                 console.log(e);
