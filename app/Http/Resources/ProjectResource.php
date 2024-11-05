@@ -12,6 +12,7 @@ class ProjectResource extends JsonResource
         return [
             'project_id' => $this->id,
             'project_name' => $this->title,
+            'project_description' => $this->description,
             'project_manager' => $this->assignees->where('is_manager', 1)->select('name', 'email'),
             'project_members' => $this->assignees->where('is_manager', 0)->map(function ($assignee) {
                 return [
@@ -27,6 +28,7 @@ class ProjectResource extends JsonResource
             }),
             'project_tasks' => $this->tasks->map(function ($task) {
                 return [
+                    'task_id' => $task->id,
                     'task' => $task->task,
                     'assignees' => $task->assignees->map(function ($assignee) {
                         return [

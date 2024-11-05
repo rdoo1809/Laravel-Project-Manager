@@ -4,7 +4,7 @@ import PrimaryButton from "@/Components/PrimaryButton.vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 
 export default {
-    name: "ProjectEditor",
+    name: "Dashboard",
     components: {Head, AuthenticatedLayout, PrimaryButton},
     props: {
         projects: {
@@ -14,33 +14,32 @@ export default {
     },
     data() {
         return {
-            projectList: this.projects,
             selectedProject: null,
             selectedTask: null,
             taskAssignees: null
         };
     },
     methods: {
-        async deleteProject(project) {
+        async deleteProject(projectId) {
             try {
-                await axios.delete(route('projects.destroy', project.id))
+                await axios.delete(route('projects.destroy', projectId))
                 window.location.reload();
             } catch (e) {
                 alert(e);
             }
         },
-        async selectProject(project) {
+        selectProject(project) {
             this.selectedProject = project;
         },
-        async selectTask(task) {
+        selectTask(task) {
             this.selectedTask = task;
-            try {
-                let taskResponse = await axios.get(route('projects.tasks.assignees', this.selectedTask))
-                // this.taskAssignees = taskResponse
-                console.log(taskResponse);
-            } catch (e) {
-                alert(e);
-            }
+            // try {
+            //     let taskResponse = await axios.get(route('projects.tasks.assignees', this.selectedTask))
+            //     // this.taskAssignees = taskResponse
+            //     console.log(taskResponse);
+            // } catch (e) {
+            //     alert(e);
+            // }
         }
     }
 }
@@ -49,15 +48,17 @@ export default {
 <template>
     <Head title="Dashboard"/>
     <AuthenticatedLayout>
-
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Project Manager 5001</h2>
+            <div>
+                <h2 class="font-bold text-xl text-gray-800 leading-tight dark:text-white">Project Manager 5001</h2>
+            </div>
         </template>
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900">{{ $page.props.auth.user.name }} - You're Logged in! Now Get to
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg dark:bg-blue-900">
+                    <div class="p-6 text-gray-900 dark:text-white">{{ $page.props.auth.user.name }} - You're Logged in!
+                        Now Get to
                         Work!
                     </div>
                 </div>
@@ -67,27 +68,27 @@ export default {
         <div class="grid gap-6 lg:grid-cols-2 lg:gap-8">
             <div class="py-12">
                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div class="p-6 text-gray-900">My Projects</div>
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg dark:bg-gray-800">
+                        <div class="p-6 text-gray-900 dark:text-white">My Projects</div>
                         <table class="border-2 w-full">
                             <tr>
                                 <td class="font-bold">Project</td>
                                 <td class="font-bold">Description</td>
                                 <td class="font-bold">Actions</td>
                             </tr>
-                            <tbody v-for="p in projectList" :key="p.id">
-                            <tr :class="{'bg-blue-200': selectedProject?.id === p.id, 'cursor-pointer': true}"
+                            <tbody v-for="p in projects.data" :key="p.project_id">
+                            <tr :class="{'bg-blue-900': selectedProject?.project_id === p.project_id, 'cursor-pointer': true}"
                                 @click="selectProject(p)">
                                 <td>
-                                    {{ p.title }}
+                                    {{ p.project_name }}
                                 </td>
                                 <td>
-                                    {{ p.description }}
+                                    {{ p.project_description }}
                                 </td>
-                                <td><a :href="route('projects.edit', p.id)"
+                                <td><a :href="route('projects.edit', p.project_id)"
                                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">EDIT</a>
                                     <a class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-                                       @click="deleteProject(p)">TRASH</a>
+                                       @click="deleteProject(p.project_id)">TRASH</a>
                                 </td>
                             </tr>
                             </tbody>
@@ -97,22 +98,21 @@ export default {
             </div>
             <div class="py-12">
                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div class="p-6 text-gray-900">{{ this.selectedProject?.title }} Members</div>
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg dark:bg-gray-800">
+                        <div class="p-6 text-gray-900 dark:text-white">{{ this.selectedProject?.title }} Members</div>
                         <table class="border-2 w-full">
                             <tr>
                                 <td class="font-bold">Member Name</td>
                                 <td class="font-bold">Contact</td>
                                 <td class="font-bold">Role</td>
                             </tr>
-                            <tbody v-for="a in this.selectedProject?.assignees.filter((b) => !b.is_manager)"
-                                   :key="a.id">
+                            <tbody v-for="a in this.selectedProject?.project_members" :key="a.id">
                             <tr>
                                 <td>
-                                    {{ a.name }}
+                                    {{ a.member_name }}
                                 </td>
                                 <td>
-                                    {{ a.email }}
+                                    {{ a.member_email }}
                                 </td>
                                 <td>
                                     {{ a.is_manager ? 'Manager' : 'Regular' }}
@@ -128,20 +128,20 @@ export default {
         <div class="grid gap-6 lg:grid-cols-2 lg:gap-8">
             <div class="py-12">
                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div class="p-6 text-gray-900">Active Tasks For Project - {{ selectedProject?.title }}</div>
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg dark:bg-gray-800">
+                        <div class="p-6 text-gray-900 dark:text-white">Active Tasks For Project - {{
+                                selectedProject?.project_name
+                            }}
+                        </div>
                         <table class="border-2 w-full">
                             <tr>
                                 <td class="font-bold">Task</td>
-                                <td class="font-bold">Project</td>
                                 <td class="font-bold">Actions</td>
                             </tr>
-
-                            <tbody v-for="task in this.selectedProject?.tasks" :key="task.id">
-                            <tr :class="{'bg-blue-200': selectedTask?.id === task.id, 'cursor-pointer': true}"
+                            <tbody v-for="task in this.selectedProject?.project_tasks" :key="task.task_id">
+                            <tr :class="{'bg-blue-900': selectedTask?.task_id === task.task_id, 'cursor-pointer': true}"
                                 @click="selectTask(task)">
                                 <td>{{ task.task }}</td>
-                                <td>{{ task.project_id }}</td>
                                 <td>View History</td>
                             </tr>
                             </tbody>
@@ -151,18 +151,20 @@ export default {
             </div>
             <div class="py-12">
                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div class="p-6 text-gray-900">Task {{ }}</div>
-                        <table class="border-2 w-full">
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg dark:bg-gray-800">
+                        <div class="p-6 text-gray-900 dark:text-white">Task #{{ this.selectedTask?.task_id }}
+                            Assignees
+                        </div>
+                        <table class="border-2 w-full dark:text-white">
                             <tr>
                                 <td class="font-bold">Employee Name</td>
                                 <td class="font-bold">Email</td>
                                 <td class="font-bold">Actions</td>
                             </tr>
-                            <tbody v-for="member in this.taskAssignees" :key="member.id">
+                            <tbody v-for="member in this.selectedTask?.assignees" :key="member.id">
                             <tr>
-                                <td>{{ member.name }}</td>
-                                <td>{{ member.email }}</td>
+                                <td>{{ member.assignee_name }}</td>
+                                <td>{{ member.assignee_email }}</td>
                                 <td>View Profile</td>
                             </tr>
                             </tbody>

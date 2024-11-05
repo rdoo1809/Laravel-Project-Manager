@@ -5,6 +5,7 @@ namespace Feature\Project;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 
 class ProjectViewTest extends TestCase
@@ -19,7 +20,9 @@ class ProjectViewTest extends TestCase
         $this->actingAs($manager)
             ->get(route('dashboard'))
             ->assertSuccessful()
-            ->assertInertia(fn($page) => $page->component('Dashboard')->has('projects', 3)
+            ->assertInertia(fn($page) => $page->component('Dashboard')
+                ->has('projects', fn(AssertableJson $json) => $json
+                    ->has('data', 3))
             );
     }
 
@@ -34,7 +37,9 @@ class ProjectViewTest extends TestCase
             ->get(route('dashboard'))
             ->assertSuccessful();
 
-        $response->assertInertia(fn($page) => $page->component('Dashboard')->has('projects', 1)->where('projects.0.id', $myProject->id)
+        $response->assertInertia(fn($page) => $page->component('Dashboard')
+            ->has('projects', 1)
+            ->where('projects.data.0.project_id', $myProject->id)
         );
     }
 }

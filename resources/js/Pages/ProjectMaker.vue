@@ -46,13 +46,13 @@ export default {
                   class="py-12 flex flex-col space-y-4 items-center">
                 <label>
                     Project Title:
-                    <input v-model="form.title" type="text"/>
+                    <input v-model="form.title" class="dark:text-black" type="text"/>
                     <h4 class="text-red-600">{{ errors?.title }}</h4>
                 </label>
                 <!--                todo render without []?-->
                 <label>
                     Description:
-                    <input v-model="form.description" type="text"/>
+                    <input v-model="form.description" class="dark:text-black" type="text"/>
                     <h4 class="text-red-600">{{ errors?.description }}</h4>
                 </label>
 

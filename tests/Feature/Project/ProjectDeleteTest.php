@@ -17,7 +17,7 @@ class ProjectDeleteTest extends TestCase
 
         $this->actingAs($regularUser)
             ->fromRoute('dashboard')
-            ->deleteJson(route('projects.destroy', $this->validProject))
+            ->deleteJson(route('projects.destroy', $this->validProject->id))
             ->assertForbidden();
 
         $this->assertDatabaseCount('projects', 1);
@@ -29,7 +29,7 @@ class ProjectDeleteTest extends TestCase
 
         $this->actingAs($managerUser)
             ->fromRoute('dashboard')
-            ->deleteJson(route('projects.destroy', $this->validProject))
+            ->deleteJson(route('projects.destroy', $this->validProject->id))
             ->assertSuccessful();
 
         $this->assertDatabaseCount('projects', 0);

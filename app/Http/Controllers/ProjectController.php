@@ -20,18 +20,14 @@ class ProjectController extends Controller
         }
 
         $projectRes = [];
-
         foreach ($projects as $project) {
             $newnew = new ProjectResource($project);
-//            dd($newnew);
             array_push($projectRes, $newnew);
-//            return $newnew;
         }
 
-
-        $projects->load(['tasks', 'assignees']);
+//        $projects->load(['tasks', 'assignees']);
         return Inertia::render('Dashboard', [
-            'projects' => $projects
+            'projects' => ProjectResource::collection($projects->load(['tasks', 'assignees']))
         ]);
     }
 

@@ -91,18 +91,18 @@ export default {
             <div class="grid gap-6 lg:grid-cols-2 lg:gap-8">
                 <div class="py-12">
                     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg dark:bg-gray-800">
                             <h4>Project Details</h4>
                             <form class="py-12 flex flex-col space-y-4 items-center"
                                   @submit.prevent="patchProject">
                                 <label>
                                     Project Name:
-                                    <input v-model="form.title" type="text"/>
+                                    <input v-model="form.title" class="dark:text-black" type="text"/>
                                 </label>
 
                                 <label>
                                     Description:
-                                    <textarea v-model="form.description" type="text"/>
+                                    <textarea v-model="form.description" class="dark:text-black" type="text"/>
                                 </label>
                             </form>
                         </div>
@@ -111,7 +111,7 @@ export default {
 
                 <div class="py-12">
                     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg dark:bg-gray-800">
                             <h4>Project Members</h4>
                             <form class="py-12 flex flex-col space-y-4 items-center">
                                 <label>
@@ -154,13 +154,13 @@ export default {
             <div class="grid gap-6 lg:grid-cols-2 lg:gap-8">
                 <div class="py-12">
                     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg dark:bg-gray-800">
                             <h4>Task Management</h4>
                             <form class="py-12 flex flex-col space-y-4 items-center"
                                   @submit.prevent="submitTask">
                                 <label>
                                     Task Description:
-                                    <input v-model="taskToAdd" type="text"/>
+                                    <input v-model="taskToAdd" class="dark:text-black" type="text"/>
                                 </label>
                                 <p>{{ this.taskErrors }}</p>
                                 <PrimaryButton class="mt-4">Add Task</PrimaryButton>
@@ -183,9 +183,7 @@ export default {
                 <div class="grid gap-6 lg:gap-8">
                     <div class="py-12">
                         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-
-
+                            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg dark:bg-gray-800">
                                 <div :hidden="this.modalHidden">
                                     <p>Assign Members to Task - #{{ this.modalTask?.id }} -
                                         {{ this.modalTask?.task }}</p>
@@ -200,8 +198,6 @@ export default {
                                         To Selected Members
                                     </PrimaryButton>
                                 </div>
-
-
                             </div>
                         </div>
                     </div>

@@ -62,7 +62,7 @@ class ProjectCreationTest extends TestCase
             ->assertSuccessful()
             ->assertInertia(fn($page) => $page->component('Dashboard')
                 ->has('projects', 1)
-                ->where('projects.0.title', $this->validProject['title'])
+                ->where('projects.data.0.project_name', $this->validProject['title'])
             );
 
         $this->assertDatabaseHas('projects', $this->validProject);
