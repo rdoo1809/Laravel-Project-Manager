@@ -22,7 +22,6 @@ class TaskCreationTest extends TestCase
         $this->task = Task::factory()->create(['project_id' => $this->project->id]);
     }
 
-    //Todo - rn we only add members after task creation - can support both? do we have the tech
     public function test_task_can_be_created_for_project(): void
     {
         $rawTask = Task::factory()->raw([

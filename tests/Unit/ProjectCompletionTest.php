@@ -9,6 +9,15 @@ class ProjectCompletionTest extends TestCase
     public function test_that_when_a_project_member_is_removed_they_are_also_removed_from_tasks(): void
     {
         $this->markTestSkipped();
+        //arrange
+        //manager
+        //member who is on a project and has a task_user record
+
+        //act - detach user from project
+
+
+        //assert
+        //they are not on the project - have no pivot records
         $this->assertTrue(true);
     }
 

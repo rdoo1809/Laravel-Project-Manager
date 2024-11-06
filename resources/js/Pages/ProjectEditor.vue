@@ -60,6 +60,7 @@ export default {
         async assignTaskMembers() {
             try {
                 console.log(this.addTaskMembers);
+                //todo why not working :(
                 await axios.post(route('projects.tasks.assign', this.modalTask.id), {
                     'addTaskMembers': this.addTaskMembers
                 })
