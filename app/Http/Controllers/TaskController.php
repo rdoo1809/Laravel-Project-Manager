@@ -37,7 +37,8 @@ class TaskController extends Controller
 
         foreach ($assignees as $assignee) {
             if ($taskProject->assignees->contains($assignee) && !$task->assignees->contains($assignee)) {
-                $task->assignees()->attach($assignee);
+//                dd($assignee);
+                $task->assignees()->attach([$assignee]);
             }
         }
 

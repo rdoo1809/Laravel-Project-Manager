@@ -88,6 +88,10 @@ class ProjectController extends Controller
         if (!auth()->user()->can('delete', $project)) {
             abort(403, 'This is above your pay grade... work harder ;)');
         }
+
+        $tasks = $project->tasks->each(function ($task) {
+            $task->delete();
+        });
         $project->delete();
     }
 
