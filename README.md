@@ -7,3 +7,5 @@ define individual tasks for a project, assign those tasks to Project members. Pr
 are a members of, view and resolve tasks that are assigned to them.
 
 This project uses Vue+Laravel with a sqlite database, and comes with a robust suite of tests written in PHPUnit.
+
+Can be run in the browser with "php artisan serve" and "npm run dev"
